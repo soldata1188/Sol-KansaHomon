@@ -149,13 +149,17 @@ export default function AnnualScheduleMatrix() {
         
         if (cloudData && cloudData.enterprises) {
           cacheRef.current = cloudData.cache || {};
-          setEnterprises(loadScheduleWithReports(currentFY, cloudData.enterprises));
-          localStorage.setItem('sol_enterprises', JSON.stringify(cloudData.enterprises));
+          const sorted = [...cloudData.enterprises].sort((a, b) => a.name.localeCompare(b.name, 'ja'));
+          setEnterprises(loadScheduleWithReports(currentFY, sorted));
+          localStorage.setItem('sol_enterprises', JSON.stringify(sorted));
           localStorage.setItem('sol_cache', JSON.stringify(cloudData.cache || {}));
         } else {
           // Fallback to LocalStorage
           const savedEnts = localStorage.getItem('sol_enterprises');
-          if (savedEnts) setEnterprises(loadScheduleWithReports(currentFY, JSON.parse(savedEnts)));
+          if (savedEnts) {
+            const sorted = JSON.parse(savedEnts).sort((a: any, b: any) => a.name.localeCompare(b.name, 'ja'));
+            setEnterprises(loadScheduleWithReports(currentFY, sorted));
+          }
         }
       } catch (e) {
         console.error('Cloud load failed', e);
@@ -237,11 +241,16 @@ export default function AnnualScheduleMatrix() {
 
   const handleSaveEnterprise = () => {
     if (!targetEnt.name) return;
-    if (modalMode === 'add') {
-      setEnterprises(prev => [...prev, { ...targetEnt, id: `ENT${Date.now()}`, schedule: calculateSchedule(targetEnt, fiscalYear) }]);
-    } else {
-      setEnterprises(prev => prev.map(e => e.id === targetEnt.id ? { ...targetEnt, schedule: calculateSchedule(targetEnt, fiscalYear) } : e));
-    }
+    setEnterprises(prev => {
+      let next;
+      if (modalMode === 'add') {
+        const newEnt: Enterprise = { ...targetEnt, id: `ENT${Date.now()}`, schedule: calculateSchedule(targetEnt, fiscalYear) };
+        next = [...prev, newEnt];
+      } else {
+        next = prev.map(e => (e.id === targetEnt.id ? { ...e, ...targetEnt, schedule: calculateSchedule(targetEnt, fiscalYear) } : e));
+      }
+      return next.sort((a, b) => a.name.localeCompare(b.name, 'ja'));
+    });
     setModalMode('none');
   };
 
