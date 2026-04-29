@@ -109,9 +109,16 @@ export default function AnnualScheduleMatrix() {
         const cachedCells = cached[ent.id];
         freshSchedule.forEach(cell => {
           const cachedCell = cachedCells.find(c => c.month === cell.month);
-          if (cachedCell?.report) {
-            cell.status = cachedCell.status;
-            cell.report = cachedCell.report;
+          if (cachedCell) {
+            // Preserve manual type/status changes even without a report
+            if (cachedCell.type !== 'none') {
+              cell.type = cachedCell.type;
+              cell.status = cachedCell.status;
+            }
+            if (cachedCell.report) {
+              cell.report = cachedCell.report;
+              cell.status = cachedCell.status;
+            }
           }
         });
       }
