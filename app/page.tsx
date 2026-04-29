@@ -51,20 +51,17 @@ const calculateSchedule = (ent: Omit<Enterprise, 'schedule' | 'id'>, fy: number)
     const currentPeriod = new Date(y, m - 1);
     let type: TaskType = 'none';
 
-    // ONLY AUTO-GENERATE VISITS (訪問)
-    // Audits (監査) will be set manually by the user
+    // AUTO-GENERATE VISITS (訪問) FOR ALL 12 MONTHS OF JISSHU 1
     if (ent.countJisshu1 > 0 && entryDate) {
       const entryMonth = entryDate.getMonth() + 1;
       const entryYear = entryDate.getFullYear();
-      const monthsSinceEntry = (y - entryYear) * 12 + (m - entryMonth);
+      
+      // Calculate the 12-month window starting from the entry month
       const startPeriod = new Date(entryYear, entryMonth - 1);
       const endPeriod = new Date(entryYear, entryMonth - 1 + 11);
       
       if (currentPeriod >= startPeriod && currentPeriod <= endPeriod) {
-        // Only set visits for months that are NOT audit months in the 3-month cycle
-        if ((monthsSinceEntry + 1) % 3 !== 0) {
-          type = 'visit';
-        }
+        type = 'visit';
       }
     }
 
