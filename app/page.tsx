@@ -509,7 +509,7 @@ export default function AnnualScheduleMatrix() {
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
             <h1 style={{ fontSize: '1.1rem', color: 'var(--primary)', fontWeight: '800', margin: 0, letterSpacing: '-0.02em' }}>年間監査・訪問スケジュール</h1>
             <span style={{ fontSize: '0.65rem', fontWeight: 'bold', color: '#bdc1c6' }}>SOL COOP.</span>
-            {isSyncing && <span style={{ fontSize: '0.6rem', color: 'var(--primary)', marginLeft: '0.5rem', animate: 'pulse 1.5s infinite' }}>☁ 同期中...</span>}
+            {isSyncing && <span style={{ fontSize: '0.6rem', color: 'var(--primary)', marginLeft: '0.5rem', animation: 'pulse 1.5s infinite' }}>☁ 同期中...</span>}
           </div>
           <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
             <button 
