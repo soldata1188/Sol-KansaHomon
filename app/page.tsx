@@ -51,27 +51,20 @@ const calculateSchedule = (ent: Omit<Enterprise, 'schedule' | 'id'>, fy: number)
     const currentPeriod = new Date(y, m - 1);
     let type: TaskType = 'none';
 
-    // 第1層: 実1の12ヶ月訪問・監査サイクル
+    // ONLY AUTO-GENERATE VISITS (訪問)
+    // Audits (監査) will be set manually by the user
     if (ent.countJisshu1 > 0 && entryDate) {
       const entryMonth = entryDate.getMonth() + 1;
       const entryYear = entryDate.getFullYear();
       const monthsSinceEntry = (y - entryYear) * 12 + (m - entryMonth);
       const startPeriod = new Date(entryYear, entryMonth - 1);
       const endPeriod = new Date(entryYear, entryMonth - 1 + 11);
+      
       if (currentPeriod >= startPeriod && currentPeriod <= endPeriod) {
-        type = (monthsSinceEntry + 1) % 3 === 0 ? 'audit' : 'visit';
-      }
-    }
-
-    // 第2層: 実1の期間外 → 実2・3/特定の定期監査 (3ヶ月ごと)
-    if (type === 'none' && (ent.countJisshu23 > 0 || ent.countTokutei > 0)) {
-      if (entryDate) {
-        // 入国月を基準に3ヶ月ごとのサイクルを維持
-        const entryMonth = entryDate.getMonth() + 1;
-        if ((m - entryMonth - 2) % 3 === 0) type = 'audit';
-      } else {
-        // 入国日がない場合は従来の3,6,9,12月サイクル
-        if (m % 3 === 0) type = 'audit';
+        // Only set visits for months that are NOT audit months in the 3-month cycle
+        if ((monthsSinceEntry + 1) % 3 !== 0) {
+          type = 'visit';
+        }
       }
     }
 
@@ -177,6 +170,11 @@ export default function AnnualScheduleMatrix() {
   useEffect(() => {
     if (!isAuthenticated) return;
     
+    // CRITICAL FIX: Save current year to cache BEFORE persisting
+    const yearCache: Record<string, ScheduleCell[]> = {};
+    enterprises.forEach(ent => { yearCache[ent.id] = ent.schedule; });
+    cacheRef.current[fiscalYear] = yearCache;
+
     localStorage.setItem('sol_enterprises', JSON.stringify(enterprises));
     localStorage.setItem('sol_cache', JSON.stringify(cacheRef.current));
 
