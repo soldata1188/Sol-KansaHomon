@@ -124,8 +124,10 @@ export default function AnnualScheduleMatrix() {
     });
   };
 
+  const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwoaB1_RZ0nheTgUNptjVz-Cv6ysusph7C_LKl3HYC2__3EygtnIrdzxAXiatXCnI0jwg/exec';
+  const [isSyncing, setIsSyncing] = useState(false);
+
   useEffect(() => {
-    // 1. ログイン状態の確認
     const auth = sessionStorage.getItem('isLoggedIn');
     if (auth === 'true') setIsAuthenticated(true);
 
@@ -134,37 +136,63 @@ export default function AnnualScheduleMatrix() {
     const currentFY = now.getMonth() + 1 >= 4 ? now.getFullYear() : now.getFullYear() - 1;
     setFiscalYear(currentFY);
 
-    // 2. Load data from LocalStorage
-    const savedEnts = localStorage.getItem('sol_enterprises');
-    const savedCache = localStorage.getItem('sol_cache');
-    
-    if (savedCache) {
+    // Initial Load: Try Cloud first, then Local
+    const loadData = async () => {
+      setIsSyncing(true);
       try {
-        cacheRef.current = JSON.parse(savedCache);
+        const response = await fetch(GOOGLE_SHEETS_URL);
+        const cloudData = await response.json();
+        
+        if (cloudData && cloudData.enterprises) {
+          cacheRef.current = cloudData.cache || {};
+          setEnterprises(loadScheduleWithReports(currentFY, cloudData.enterprises));
+          localStorage.setItem('sol_enterprises', JSON.stringify(cloudData.enterprises));
+          localStorage.setItem('sol_cache', JSON.stringify(cloudData.cache || {}));
+        } else {
+          // Fallback to LocalStorage
+          const savedEnts = localStorage.getItem('sol_enterprises');
+          if (savedEnts) setEnterprises(loadScheduleWithReports(currentFY, JSON.parse(savedEnts)));
+        }
       } catch (e) {
-        console.error('Failed to parse cache', e);
+        console.error('Cloud load failed', e);
+        const savedEnts = localStorage.getItem('sol_enterprises');
+        if (savedEnts) setEnterprises(loadScheduleWithReports(currentFY, JSON.parse(savedEnts)));
+      } finally {
+        setIsSyncing(false);
       }
-    }
+    };
 
-    if (savedEnts) {
-      try {
-        const parsed = JSON.parse(savedEnts);
-        setEnterprises(loadScheduleWithReports(currentFY, parsed));
-      } catch (e) {
-        console.error('Failed to parse enterprises', e);
-        setEnterprises([]);
-      }
-    } else {
-      setEnterprises([]);
-    }
+    loadData();
   }, []);
 
-  // 3. Auto-save to LocalStorage whenever data changes
+  // Sync to Cloud & LocalStorage
   useEffect(() => {
-    if (isAuthenticated) {
-      localStorage.setItem('sol_enterprises', JSON.stringify(enterprises));
-      localStorage.setItem('sol_cache', JSON.stringify(cacheRef.current));
-    }
+    if (!isAuthenticated) return;
+    
+    localStorage.setItem('sol_enterprises', JSON.stringify(enterprises));
+    localStorage.setItem('sol_cache', JSON.stringify(cacheRef.current));
+
+    const syncToCloud = async () => {
+      setIsSyncing(true);
+      try {
+        await fetch(GOOGLE_SHEETS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: JSON.stringify({
+            action: 'SAVE',
+            data: { enterprises, cache: cacheRef.current }
+          })
+        });
+      } catch (e) {
+        console.error('Sync failed', e);
+      } finally {
+        // Since no-cors doesn't give response, we just wait a bit
+        setTimeout(() => setIsSyncing(false), 1000);
+      }
+    };
+
+    const timer = setTimeout(syncToCloud, 1500); // Debounce sync
+    return () => clearTimeout(timer);
   }, [enterprises, isAuthenticated]);
 
   const changeFiscalYear = (delta: number) => {
@@ -481,6 +509,7 @@ export default function AnnualScheduleMatrix() {
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
             <h1 style={{ fontSize: '1.1rem', color: 'var(--primary)', fontWeight: '800', margin: 0, letterSpacing: '-0.02em' }}>年間監査・訪問スケジュール</h1>
             <span style={{ fontSize: '0.65rem', fontWeight: 'bold', color: '#bdc1c6' }}>SOL COOP.</span>
+            {isSyncing && <span style={{ fontSize: '0.6rem', color: 'var(--primary)', marginLeft: '0.5rem', animate: 'pulse 1.5s infinite' }}>☁ 同期中...</span>}
           </div>
           <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
             <button 
