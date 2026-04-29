@@ -125,7 +125,7 @@ export default function AnnualScheduleMatrix() {
   };
 
   useEffect(() => {
-    // ログイン状態の確認
+    // 1. ログイン状態の確認
     const auth = sessionStorage.getItem('isLoggedIn');
     if (auth === 'true') setIsAuthenticated(true);
 
@@ -133,12 +133,39 @@ export default function AnnualScheduleMatrix() {
     setCurrentMonth(now.getMonth() + 1);
     const currentFY = now.getMonth() + 1 >= 4 ? now.getFullYear() : now.getFullYear() - 1;
     setFiscalYear(currentFY);
-    const initialData: Enterprise[] = [];
 
-    // 2026年度（現行データ）の初期化
-    const data2026 = initialData.map(ent => ({ ...ent, schedule: calculateSchedule(ent, currentFY) }));
-    setEnterprises(data2026);
+    // 2. Load data from LocalStorage
+    const savedEnts = localStorage.getItem('sol_enterprises');
+    const savedCache = localStorage.getItem('sol_cache');
+    
+    if (savedCache) {
+      try {
+        cacheRef.current = JSON.parse(savedCache);
+      } catch (e) {
+        console.error('Failed to parse cache', e);
+      }
+    }
+
+    if (savedEnts) {
+      try {
+        const parsed = JSON.parse(savedEnts);
+        setEnterprises(loadScheduleWithReports(currentFY, parsed));
+      } catch (e) {
+        console.error('Failed to parse enterprises', e);
+        setEnterprises([]);
+      }
+    } else {
+      setEnterprises([]);
+    }
   }, []);
+
+  // 3. Auto-save to LocalStorage whenever data changes
+  useEffect(() => {
+    if (isAuthenticated) {
+      localStorage.setItem('sol_enterprises', JSON.stringify(enterprises));
+      localStorage.setItem('sol_cache', JSON.stringify(cacheRef.current));
+    }
+  }, [enterprises, isAuthenticated]);
 
   const changeFiscalYear = (delta: number) => {
     const newFY = fiscalYear + delta;
