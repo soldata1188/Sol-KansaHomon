@@ -84,6 +84,7 @@ export default function AnnualScheduleMatrix() {
   const [enterprises, setEnterprises] = useState<Enterprise[]>([]);
   const [modalMode, setModalMode] = useState<'add' | 'edit' | 'checklist' | 'settype' | 'none'>('none');
   const [selectedCell, setSelectedCell] = useState<{ entId: string; month: number; type: TaskType } | null>(null);
+  const [isInitialLoadDone, setIsInitialLoadDone] = useState(false);
   const [targetEnt, setTargetEnt] = useState<Omit<Enterprise, 'schedule'>>({ id: '', name: '', countTokutei: 0, countJisshu23: 0, countJisshu1: 0, entryDateJisshu1: '' });
   const [currentMonth, setCurrentMonth] = useState(0);
   const [fiscalYear, setFiscalYear] = useState(2026);
@@ -137,7 +138,8 @@ export default function AnnualScheduleMatrix() {
         const response = await fetch(GOOGLE_SHEETS_URL);
         const cloudData = await response.json();
         
-        if (cloudData && cloudData.enterprises) {
+        if (cloudData && cloudData.enterprises && cloudData.enterprises.length > 0) {
+          console.log('Loaded from Cloud:', cloudData.enterprises.length, 'companies');
           cacheRef.current = cloudData.cache || {};
           const sorted = [...cloudData.enterprises].sort((a, b) => a.name.localeCompare(b.name, 'ja'));
           setEnterprises(loadScheduleWithReports(currentFY, sorted));
@@ -146,7 +148,10 @@ export default function AnnualScheduleMatrix() {
         } else {
           // Fallback to LocalStorage
           const savedEnts = localStorage.getItem('sol_enterprises');
+          const savedCache = localStorage.getItem('sol_cache');
           if (savedEnts) {
+            console.warn('Loading from LocalStorage fallback');
+            if (savedCache) cacheRef.current = JSON.parse(savedCache);
             const sorted = JSON.parse(savedEnts).sort((a: any, b: any) => a.name.localeCompare(b.name, 'ja'));
             setEnterprises(loadScheduleWithReports(currentFY, sorted));
           }
@@ -154,9 +159,14 @@ export default function AnnualScheduleMatrix() {
       } catch (e) {
         console.error('Cloud load failed', e);
         const savedEnts = localStorage.getItem('sol_enterprises');
-        if (savedEnts) setEnterprises(loadScheduleWithReports(currentFY, JSON.parse(savedEnts)));
+        const savedCache = localStorage.getItem('sol_cache');
+        if (savedEnts) {
+          if (savedCache) cacheRef.current = JSON.parse(savedCache);
+          setEnterprises(loadScheduleWithReports(currentFY, JSON.parse(savedEnts)));
+        }
       } finally {
         setIsSyncing(false);
+        setIsInitialLoadDone(true);
       }
     };
 
@@ -165,7 +175,7 @@ export default function AnnualScheduleMatrix() {
 
   // Sync to Cloud & LocalStorage
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || !isInitialLoadDone || enterprises.length === 0) return;
     
     // CRITICAL FIX: Save current year to cache BEFORE persisting
     const yearCache: Record<string, ScheduleCell[]> = {};
@@ -176,27 +186,34 @@ export default function AnnualScheduleMatrix() {
     localStorage.setItem('sol_cache', JSON.stringify(cacheRef.current));
 
     const syncToCloud = async () => {
+      if (enterprises.length === 0) return;
       setIsSyncing(true);
       try {
+        // Prepare data package
+        const payload = {
+          action: 'SAVE',
+          data: { enterprises, cache: cacheRef.current }
+        };
+
         await fetch(GOOGLE_SHEETS_URL, {
           method: 'POST',
-          mode: 'no-cors',
-          body: JSON.stringify({
-            action: 'SAVE',
-            data: { enterprises, cache: cacheRef.current }
-          })
+          mode: 'no-cors', // GAS requires no-cors for simple web app posts from browser
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
         });
+        
+        console.log('Sync payload sent to Cloud');
       } catch (e) {
         console.error('Sync failed', e);
       } finally {
-        // Since no-cors doesn't give response, we just wait a bit
-        setTimeout(() => setIsSyncing(false), 1000);
+        // Since no-cors doesn't provide a response, we wait a bit to show "Complete"
+        setTimeout(() => setIsSyncing(false), 800);
       }
     };
 
     const timer = setTimeout(syncToCloud, 1500); // Debounce sync
     return () => clearTimeout(timer);
-  }, [enterprises, isAuthenticated]);
+  }, [enterprises, isAuthenticated, isInitialLoadDone]);
 
   const changeFiscalYear = (delta: number) => {
     const newFY = fiscalYear + delta;
@@ -517,7 +534,14 @@ export default function AnnualScheduleMatrix() {
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
             <h1 style={{ fontSize: '1.1rem', color: 'var(--primary)', fontWeight: '800', margin: 0, letterSpacing: '-0.02em' }}>年間監査・訪問スケジュール</h1>
             <span style={{ fontSize: '0.65rem', fontWeight: 'bold', color: '#bdc1c6' }}>SOL COOP.</span>
-            {isSyncing && <span style={{ fontSize: '0.6rem', color: 'var(--primary)', marginLeft: '0.5rem', animation: 'pulse 1.5s infinite' }}>☁ 同期中...</span>}
+            {isSyncing ? (
+              <span style={{ fontSize: '0.65rem', color: 'var(--primary)', marginLeft: '0.5rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <span style={{ width: '6px', height: '6px', background: 'var(--primary)', borderRadius: '50%', animation: 'pulse 1s infinite' }}></span>
+                同期中...
+              </span>
+            ) : isInitialLoadDone && (
+              <span style={{ fontSize: '0.65rem', color: 'var(--status-green)', marginLeft: '0.5rem', opacity: 0.8 }}>● クラウド同期済み</span>
+            )}
           </div>
           <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
             <button 
