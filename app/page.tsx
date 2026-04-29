@@ -139,7 +139,7 @@ export default function AnnualScheduleMatrix() {
         const cloudData = await response.json();
         
         if (cloudData && cloudData.enterprises && cloudData.enterprises.length > 0) {
-          console.log('Loaded from Cloud:', cloudData.enterprises.length, 'companies');
+          console.log('クラウドからロードしました:', cloudData.enterprises.length, '社');
           cacheRef.current = cloudData.cache || {};
           const sorted = [...cloudData.enterprises].sort((a, b) => a.name.localeCompare(b.name, 'ja'));
           setEnterprises(loadScheduleWithReports(currentFY, sorted));
@@ -150,7 +150,7 @@ export default function AnnualScheduleMatrix() {
           const savedEnts = localStorage.getItem('sol_enterprises');
           const savedCache = localStorage.getItem('sol_cache');
           if (savedEnts) {
-            console.warn('Loading from LocalStorage fallback');
+            console.warn('ローカルストレージからデータを復元しました');
             if (savedCache) cacheRef.current = JSON.parse(savedCache);
             const sorted = JSON.parse(savedEnts).sort((a: any, b: any) => a.name.localeCompare(b.name, 'ja'));
             setEnterprises(loadScheduleWithReports(currentFY, sorted));
@@ -202,9 +202,9 @@ export default function AnnualScheduleMatrix() {
           body: JSON.stringify(payload)
         });
         
-        console.log('Sync payload sent to Cloud');
+        console.log('クラウドに同期データを送信しました');
       } catch (e) {
-        console.error('Sync failed', e);
+        console.error('同期に失敗しました', e);
       } finally {
         // Since no-cors doesn't provide a response, we wait a bit to show "Complete"
         setTimeout(() => setIsSyncing(false), 800);
@@ -289,13 +289,7 @@ export default function AnnualScheduleMatrix() {
       saveCurrentToCache(fiscalYear, updated);
       return updated;
     });
-    if (newType === 'none') {
-      setModalMode('none');
-    } else {
-      setSelectedCell({ ...selectedCell, type: newType });
-      setTempReport({ ...emptyReport });
-      setModalMode('checklist');
-    }
+    setModalMode('none');
   };
 
   const handleRemoveSchedule = () => {
