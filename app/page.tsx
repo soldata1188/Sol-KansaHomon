@@ -9,6 +9,10 @@ interface ReportData {
   staff: string;
   date: string;
   interviewee: string;
+  // Fields for visit part within an audit month
+  vStaff?: string;
+  vDate?: string;
+  vInterviewee?: string;
   remarks: string;
   checkSalary: 'ok' | 'ng' | null;
   checkLog: 'ok' | 'ng' | null;
@@ -93,7 +97,7 @@ export default function AnnualScheduleMatrix() {
   const [targetEnt, setTargetEnt] = useState<Omit<Enterprise, 'schedule'>>({ id: '', name: '', countTokutei: 0, countJisshu23: 0, countJisshu1: 0, entryDateJisshu1: '' });
   const [currentMonth, setCurrentMonth] = useState(0);
   const [fiscalYear, setFiscalYear] = useState(2026);
-  const emptyReport: ReportData = { staff: '', date: '', interviewee: '', remarks: '', checkSalary: null, checkLog: null };
+  const emptyReport: ReportData = { staff: '', date: '', interviewee: '', vStaff: '', vDate: '', vInterviewee: '', remarks: '', checkSalary: null, checkLog: null };
   const [tempReport, setTempReport] = useState<ReportData>({ ...emptyReport });
   // キャッシュ: { [fiscalYear]: { [enterpriseId]: ScheduleCell[] } }
   const cacheRef = React.useRef<Record<number, Record<string, ScheduleCell[]>>>({});
@@ -558,39 +562,78 @@ export default function AnnualScheduleMatrix() {
       {/* CHECKLIST MODAL */}
       {modalMode === 'checklist' && selectedCell && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1200 }}>
-          <div className="card card-modal" style={{ width: '500px', display: 'flex', flexDirection: 'column', maxHeight: '90vh' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--card-border)', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
-              <h2 style={{ fontSize: '1.1rem', margin: 0 }}>{enterprises.find(e => e.id === selectedCell.entId)?.name} - {selectedCell.month}月 {selectedCell.type === 'audit' ? '定期監査' : '訪問指導'}</h2>
-              <button onClick={() => setModalMode('none')} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>×</button>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', overflowY: 'auto' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div><label style={{ display: 'block', fontSize: '0.875rem' }}>担当者</label><input type="text" value={tempReport.staff} onChange={e => setTempReport({ ...tempReport, staff: e.target.value })} style={inputStyle} /></div>
-                <div><label style={{ display: 'block', fontSize: '0.875rem' }}>実施日</label><input type="date" value={tempReport.date} onChange={e => setTempReport({ ...tempReport, date: e.target.value })} style={inputStyle} /></div>
-              </div>
-              <div><label style={{ display: 'block', fontSize: '0.875rem' }}>面談者</label><input type="text" value={tempReport.interviewee} onChange={e => setTempReport({ ...tempReport, interviewee: e.target.value })} style={inputStyle} /></div>
+          <div className="card card-modal" style={{ width: '500px', display: 'flex', flexDirection: 'column', maxHeight: '95vh', overflowY: 'auto' }}>
+            <h2 style={{ fontSize: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid var(--card-border)', paddingBottom: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
+              <span>{targetEnt?.name} - {selectedCell.month}月 {selectedCell.type === 'audit' ? '監査・訪問' : '訪問指導'}</span>
+              <button onClick={() => setModalMode('none')} style={{ border: 'none', background: 'transparent', fontSize: '1.25rem', cursor: 'pointer', padding: '0 5px' }}>×</button>
+            </h2>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {/* AUDIT SECTION (Only for Audit type) */}
               {selectedCell.type === 'audit' && (
-                <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '4px', border: '1px solid var(--card-border)' }}>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 'bold', marginBottom: '0.75rem' }}>法定書類確認</label>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div style={{ background: 'var(--status-yellow-bg)', padding: '0.75rem', borderRadius: '4px', border: '1px solid #fde68a' }}>
+                  <h3 style={{ fontSize: '0.85rem', color: 'var(--status-yellow)', margin: '0 0 0.75rem 0', fontWeight: 'bold' }}>【監査】</h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                    <div><label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)' }}>担当者</label><input type="text" value={tempReport.staff} onChange={e => setTempReport({ ...tempReport, staff: e.target.value })} style={inputStyle} autoComplete="off" /></div>
+                    <div><label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)' }}>実施日</label><input type="date" value={tempReport.date} onChange={e => setTempReport({ ...tempReport, date: e.target.value })} style={inputStyle} /></div>
+                  </div>
+                  <div style={{ marginTop: '0.75rem' }}><label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)' }}>面談者</label><input type="text" value={tempReport.interviewee} onChange={e => setTempReport({ ...tempReport, interviewee: e.target.value })} style={inputStyle} /></div>
+                  
+                  <div style={{ marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '0.875rem' }}>給料明細</span>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>給料明細</span>
                       <div style={{ display: 'flex', gap: '0.4rem' }}>
-                        <button onClick={() => setTempReport({ ...tempReport, checkSalary: 'ok' })} style={{ padding: '4px 10px', fontSize: '0.75rem', border: '1px solid var(--card-border)', borderRadius: '4px', background: tempReport.checkSalary === 'ok' ? 'var(--status-green)' : 'white', color: tempReport.checkSalary === 'ok' ? 'white' : 'inherit', cursor: 'pointer' }}>適正</button>
-                        <button onClick={() => setTempReport({ ...tempReport, checkSalary: 'ng' })} style={{ padding: '4px 10px', fontSize: '0.75rem', border: '1px solid var(--card-border)', borderRadius: '4px', background: tempReport.checkSalary === 'ng' ? 'var(--status-red)' : 'white', color: tempReport.checkSalary === 'ng' ? 'white' : 'inherit', cursor: 'pointer' }}>不備</button>
+                        <button onClick={() => setTempReport({ ...tempReport, checkSalary: 'ok' })} style={{ padding: '2px 8px', fontSize: '0.7rem', border: '1px solid var(--card-border)', borderRadius: '4px', background: tempReport.checkSalary === 'ok' ? 'var(--status-green)' : 'white', color: tempReport.checkSalary === 'ok' ? 'white' : 'inherit', cursor: 'pointer' }}>適正</button>
+                        <button onClick={() => setTempReport({ ...tempReport, checkSalary: 'ng' })} style={{ padding: '2px 8px', fontSize: '0.7rem', border: '1px solid var(--card-border)', borderRadius: '4px', background: tempReport.checkSalary === 'ng' ? 'var(--status-red)' : 'white', color: tempReport.checkSalary === 'ng' ? 'white' : 'inherit', cursor: 'pointer' }}>不備</button>
                       </div>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '0.875rem' }}>実習日誌</span>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>実習日誌</span>
                       <div style={{ display: 'flex', gap: '0.4rem' }}>
-                        <button onClick={() => setTempReport({ ...tempReport, checkLog: 'ok' })} style={{ padding: '4px 10px', fontSize: '0.75rem', border: '1px solid var(--card-border)', borderRadius: '4px', background: tempReport.checkLog === 'ok' ? 'var(--status-green)' : 'white', color: tempReport.checkLog === 'ok' ? 'white' : 'inherit', cursor: 'pointer' }}>適正</button>
-                        <button onClick={() => setTempReport({ ...tempReport, checkLog: 'ng' })} style={{ padding: '4px 10px', fontSize: '0.75rem', border: '1px solid var(--card-border)', borderRadius: '4px', background: tempReport.checkLog === 'ng' ? 'var(--status-red)' : 'white', color: tempReport.checkLog === 'ng' ? 'white' : 'inherit', cursor: 'pointer' }}>不備</button>
+                        <button onClick={() => setTempReport({ ...tempReport, checkLog: 'ok' })} style={{ padding: '2px 8px', fontSize: '0.7rem', border: '1px solid var(--card-border)', borderRadius: '4px', background: tempReport.checkLog === 'ok' ? 'var(--status-green)' : 'white', color: tempReport.checkLog === 'ok' ? 'white' : 'inherit', cursor: 'pointer' }}>適正</button>
+                        <button onClick={() => setTempReport({ ...tempReport, checkLog: 'ng' })} style={{ padding: '2px 8px', fontSize: '0.7rem', border: '1px solid var(--card-border)', borderRadius: '4px', background: tempReport.checkLog === 'ng' ? 'var(--status-red)' : 'white', color: tempReport.checkLog === 'ng' ? 'white' : 'inherit', cursor: 'pointer' }}>不備</button>
                       </div>
                     </div>
                   </div>
                 </div>
               )}
-              <div><label style={{ display: 'block', fontSize: '0.875rem' }}>備考欄</label><textarea value={tempReport.remarks} onChange={e => setTempReport({ ...tempReport, remarks: e.target.value })} style={{ ...inputStyle, height: '80px', resize: 'none' }}></textarea></div>
+
+              {/* VISIT SECTION (For both Visit and Audit months) */}
+              <div style={{ background: 'var(--primary-light)', padding: '0.75rem', borderRadius: '4px', border: '1px solid #bfdbfe' }}>
+                <h3 style={{ fontSize: '0.85rem', color: 'var(--primary)', margin: '0 0 0.75rem 0', fontWeight: 'bold' }}>{selectedCell.type === 'audit' ? '【訪問指導】' : '訪問指導 内容'}</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)' }}>担当者</label>
+                    <input 
+                      type="text" 
+                      value={selectedCell.type === 'audit' ? tempReport.vStaff : tempReport.staff} 
+                      onChange={e => selectedCell.type === 'audit' ? setTempReport({ ...tempReport, vStaff: e.target.value }) : setTempReport({ ...tempReport, staff: e.target.value })} 
+                      style={inputStyle} 
+                      autoComplete="off"
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)' }}>実施日</label>
+                    <input 
+                      type="date" 
+                      value={selectedCell.type === 'audit' ? tempReport.vDate : tempReport.date} 
+                      onChange={e => selectedCell.type === 'audit' ? setTempReport({ ...tempReport, vDate: e.target.value }) : setTempReport({ ...tempReport, date: e.target.value })} 
+                      style={inputStyle} 
+                    />
+                  </div>
+                </div>
+                <div style={{ marginTop: '0.75rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)' }}>面談者</label>
+                  <input 
+                    type="text" 
+                    value={selectedCell.type === 'audit' ? tempReport.vInterviewee : tempReport.interviewee} 
+                    onChange={e => selectedCell.type === 'audit' ? setTempReport({ ...tempReport, vInterviewee: e.target.value }) : setTempReport({ ...tempReport, interviewee: e.target.value })} 
+                    style={inputStyle} 
+                  />
+                </div>
+              </div>
+
+              <div><label style={{ display: 'block', fontSize: '0.875rem' }}>備考欄</label><textarea value={tempReport.remarks} onChange={e => setTempReport({ ...tempReport, remarks: e.target.value })} style={{ ...inputStyle, height: '60px', resize: 'none' }}></textarea></div>
             </div>
             <div style={{ marginTop: '1.5rem', display: 'flex', gap: '0.75rem' }}>
               <button onClick={handleRemoveSchedule} style={{ flex: '0 0 auto', padding: '0.6rem 0.8rem', border: '1px solid var(--status-red)', borderRadius: '4px', background: 'white', color: 'var(--status-red)', cursor: 'pointer', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>スケジュール解除</button>
