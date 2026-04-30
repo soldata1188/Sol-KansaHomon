@@ -39,12 +39,6 @@ interface Enterprise {
 const MONTHS = [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3];
 
 // --- Utilities ---
-const getFiscalMonths = (year: number) => {
-  return MONTHS.map(m => ({
-    month: m,
-    year: m >= 4 ? year : year + 1
-  }));
-};
 
 const formatShortDate = (d: string) => {
   if (!d) return '';
@@ -123,9 +117,6 @@ export default function AuditSystem() {
     };
     const safeGetLocal = (key: string): string | null => {
       try { return localStorage.getItem(key); } catch { return null; }
-    };
-    const safeSetLocal = (key: string, value: string) => {
-      try { localStorage.setItem(key, value); } catch { /* silent */ }
     };
 
     const auth = safeGetSession('isLoggedIn');
@@ -470,13 +461,24 @@ export default function AuditSystem() {
     );
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === 'Solution422@') {
-      setIsAuthenticated(true);
-      try { sessionStorage.setItem('isLoggedIn', 'true'); } catch { /* silent */ }
-      setLoginError(false);
-    } else setLoginError(true);
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+      if (res.ok) {
+        setIsAuthenticated(true);
+        try { sessionStorage.setItem('isLoggedIn', 'true'); } catch { /* silent */ }
+        setLoginError(false);
+      } else {
+        setLoginError(true);
+      }
+    } catch {
+      setLoginError(true);
+    }
   };
 
   const inputStyle = { width: '100%', padding: '0.6rem', border: '1px solid var(--card-border)', borderRadius: '4px', boxSizing: 'border-box' as const };
