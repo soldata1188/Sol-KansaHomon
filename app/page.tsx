@@ -665,13 +665,28 @@ export default function AuditSystem() {
           <div className="card card-modal" style={{ width: '400px' }}>
             <h3>{modalMode === 'add' ? '実習実施者の登録' : '実習実施者の編集'}</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <input type="text" placeholder="企業名" value={targetEnt.name} onChange={e => setTargetEnt({...targetEnt, name: e.target.value})} style={inputStyle} />
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
-                <input type="number" placeholder="特定" value={targetEnt.countTokutei} onChange={e => setTargetEnt({...targetEnt, countTokutei: parseInt(e.target.value)||0})} style={inputStyle} />
-                <input type="number" placeholder="実23" value={targetEnt.countJisshu23} onChange={e => setTargetEnt({...targetEnt, countJisshu23: parseInt(e.target.value)||0})} style={inputStyle} />
-                <input type="number" placeholder="実1" value={targetEnt.countJisshu1} onChange={e => setTargetEnt({...targetEnt, countJisshu1: parseInt(e.target.value)||0})} style={inputStyle} />
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>企業名</label>
+                <input type="text" placeholder="企業名" value={targetEnt.name} onChange={e => setTargetEnt({...targetEnt, name: e.target.value})} style={inputStyle} />
               </div>
-              <input type="date" value={targetEnt.entryDateJisshu1} onChange={e => setTargetEnt({...targetEnt, entryDateJisshu1: e.target.value})} style={inputStyle} />
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>特定</label>
+                  <input type="number" placeholder="0" value={targetEnt.countTokutei} onChange={e => setTargetEnt({...targetEnt, countTokutei: parseInt(e.target.value)||0})} style={inputStyle} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>実2・3</label>
+                  <input type="number" placeholder="0" value={targetEnt.countJisshu23} onChange={e => setTargetEnt({...targetEnt, countJisshu23: parseInt(e.target.value)||0})} style={inputStyle} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>実1</label>
+                  <input type="number" placeholder="0" value={targetEnt.countJisshu1} onChange={e => setTargetEnt({...targetEnt, countJisshu1: parseInt(e.target.value)||0})} style={inputStyle} />
+                </div>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>実1入国日</label>
+                <input type="date" value={targetEnt.entryDateJisshu1} onChange={e => setTargetEnt({...targetEnt, entryDateJisshu1: e.target.value})} style={inputStyle} />
+              </div>
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
                 <button className="btn" style={{ flex: 1 }} onClick={() => setModalMode('none')}>キャンセル</button>
                 <button className="btn btn-primary" style={{ flex: 1 }} onClick={handleSaveEnterprise}>保存</button>
