@@ -835,9 +835,6 @@ export default function AuditSystem() {
             <button onClick={handleAutoFillVisits} style={{ padding: '0.3rem 0.6rem', border: '1px solid #c2e7ff', borderRadius: '3px', background: '#f1f8ff', color: '#0061c1', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
               <span>⚙️</span> 訪問を自動補完 (12ヶ月)
             </button>
-            <button onClick={handleResetAllSchedules} style={{ padding: '0.3rem 0.6rem', border: '1px solid #fecaca', borderRadius: '3px', background: '#fff5f5', color: '#dc2626', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-              <span>🗑️</span> 全履歴リセット
-            </button>
           </div>
         </div>
 
