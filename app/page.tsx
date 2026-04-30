@@ -144,43 +144,49 @@ export default function AnnualScheduleMatrix() {
       try {
         const response = await fetch(GOOGLE_SHEETS_URL);
         const cloudData = await response.json();
-        
-        if (cloudData && cloudData.enterprises && cloudData.enterprises.length > 0) {
-          console.log('クラウドからロードしました:', cloudData.enterprises.length, '社');
-          cacheRef.current = cloudData.cache || {};
-          const sorted = [...cloudData.enterprises].sort((a, b) => {
+        const cloudEnts = cloudData?.enterprises || [];
+        const cloudCache = cloudData?.cache || {};
+
+        const savedEntsRaw = localStorage.getItem('sol_enterprises');
+        const savedCacheRaw = localStorage.getItem('sol_cache');
+        const localEnts = savedEntsRaw ? JSON.parse(savedEntsRaw) : [];
+        const localCache = savedCacheRaw ? JSON.parse(savedCacheRaw) : {};
+
+        const mergedEntsMap = new Map();
+        cloudEnts.forEach((ent: Enterprise) => mergedEntsMap.set(ent.id, ent));
+        localEnts.forEach((le: Enterprise) => {
+          if (!mergedEntsMap.has(le.id)) {
+            mergedEntsMap.set(le.id, le);
+            console.log('LocalStorageからデータを復元しました:', le.name);
+          }
+        });
+        const mergedEnts = Array.from(mergedEntsMap.values());
+
+        const mergedCache = { ...cloudCache };
+        Object.keys(localCache).forEach(year => {
+          if (!mergedCache[year]) {
+            mergedCache[year] = localCache[year];
+          } else {
+            Object.keys(localCache[year]).forEach(entId => {
+              if (!mergedCache[year][entId]) mergedCache[year][entId] = localCache[year][entId];
+            });
+          }
+        });
+
+        if (mergedEnts.length > 0) {
+          cacheRef.current = mergedCache;
+          const sorted = mergedEnts.sort((a, b) => {
             if (!a.entryDateJisshu1 && !b.entryDateJisshu1) return a.name.localeCompare(b.name, 'ja');
             if (!a.entryDateJisshu1) return 1;
             if (!b.entryDateJisshu1) return -1;
             return b.entryDateJisshu1.localeCompare(a.entryDateJisshu1);
           });
           setEnterprises(loadScheduleWithReports(currentFY, sorted));
-          localStorage.setItem('sol_enterprises', JSON.stringify(sorted));
-          localStorage.setItem('sol_cache', JSON.stringify(cloudData.cache || {}));
-        } else {
-          // Fallback to LocalStorage
-          const savedEnts = localStorage.getItem('sol_enterprises');
-          const savedCache = localStorage.getItem('sol_cache');
-          if (savedEnts) {
-            console.warn('ローカルストレージからデータを復元しました');
-            if (savedCache) cacheRef.current = JSON.parse(savedCache);
-            const sorted = JSON.parse(savedEnts).sort((a: any, b: any) => {
-              if (!a.entryDateJisshu1 && !b.entryDateJisshu1) return a.name.localeCompare(b.name, 'ja');
-              if (!a.entryDateJisshu1) return 1;
-              if (!b.entryDateJisshu1) return -1;
-              return b.entryDateJisshu1.localeCompare(a.entryDateJisshu1);
-            });
-            setEnterprises(loadScheduleWithReports(currentFY, sorted));
-          }
         }
       } catch (e) {
-        console.error('Cloud load failed', e);
+        console.error('Data load failed', e);
         const savedEnts = localStorage.getItem('sol_enterprises');
-        const savedCache = localStorage.getItem('sol_cache');
-        if (savedEnts) {
-          if (savedCache) cacheRef.current = JSON.parse(savedCache);
-          setEnterprises(loadScheduleWithReports(currentFY, JSON.parse(savedEnts)));
-        }
+        if (savedEnts) setEnterprises(loadScheduleWithReports(currentFY, JSON.parse(savedEnts)));
       } finally {
         setIsSyncing(false);
         setIsInitialLoadDone(true);
