@@ -444,6 +444,32 @@ export default function AuditSystem() {
     }
   };
 
+  const handleResetAllSchedules = async () => {
+    const firstConfirm = confirm('⚠️ 警告！\n全企業の監査・訪問スケジュールと完了報告を削除します。\nこの操作は元に戻せません。\n本当に削除しますか？');
+    if (!firstConfirm) return;
+    const secondConfirm = confirm('もう一度確認。\n「はい」を押すと全データが永久履歬から削除されます。');
+    if (!secondConfirm) return;
+
+    // 1. Wipe cache
+    cacheRef.current = {};
+
+    // 2. Reset all enterprise schedules to blank
+    const resetEnts = enterprises.map(ent => ({
+      ...ent,
+      schedule: MONTHS.map(m => ({ month: m, type: 'none' as TaskType, status: 'pending' as StatusType }))
+    }));
+
+    // 3. Clear localStorage
+    try {
+      localStorage.removeItem('sol_cache');
+      localStorage.setItem('sol_enterprises', JSON.stringify(resetEnts.map(e => ({ ...e, schedule: [] }))));
+    } catch { /* silent */ }
+
+    setEnterprises(resetEnts);
+    setTimeout(() => syncToCloud(resetEnts), 500);
+    alert('スケジュール・完了報告を全て削除しました。');
+  };
+
   const handleSetType = (newType: TaskType) => {
     if (!selectedCell) return;
     setEnterprises(prev => {
@@ -769,6 +795,9 @@ export default function AuditSystem() {
             </button>
             <button onClick={handleAutoFillVisits} style={{ padding: '0.3rem 0.6rem', border: '1px solid #c2e7ff', borderRadius: '3px', background: '#f1f8ff', color: '#0061c1', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
               <span>⚙️</span> 訪問を自動補完 (12ヶ月)
+            </button>
+            <button onClick={handleResetAllSchedules} style={{ padding: '0.3rem 0.6rem', border: '1px solid #fecaca', borderRadius: '3px', background: '#fff5f5', color: '#dc2626', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+              <span>🗑️</span> 全履歴リセット
             </button>
           </div>
         </div>
