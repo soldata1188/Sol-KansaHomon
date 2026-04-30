@@ -106,7 +106,8 @@ export default function AuditSystem() {
   const [filterMode, setFilterMode] = useState<'all' | 'audit' | 'visit' | 'pending'>('all');
   const scrollRef = useRef<HTMLDivElement | HTMLTableRowElement | null>(null);
 
-  const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwoaB1_RZ0nheTgUNptjVz-Cv6ysusph7C_LKl3HYC2__3EygtnIrdzxAXiatXCnI0jwg/exec';
+  // Use Next.js API proxy to avoid CORS issues with direct GAS calls
+  const SYNC_API_URL = '/api/sync';
 
   // --- Search Scroll Effect ---
   useEffect(() => {
@@ -140,13 +141,14 @@ export default function AuditSystem() {
       let cloudEnts: Enterprise[] = [];
       let cloudCache: Record<string, any> = {};
 
-      // Step 1: Try to fetch from Cloud (non-fatal if fails)
+      // Step 1: Fetch from Cloud via server-side proxy (no CORS issues)
       try {
-        const response = await fetch(GOOGLE_SHEETS_URL);
+        const response = await fetch(SYNC_API_URL, { cache: 'no-store' });
         if (response.ok) {
           const cloudData = await response.json();
           cloudEnts = cloudData?.enterprises || [];
           cloudCache = cloudData?.cache || {};
+          console.log(`☁️ クラウドから ${cloudEnts.length} 件を読み込みました`);
         }
       } catch (e) {
         console.warn('クラウドからの読み込みに失敗しました（ローカルを使用します）:', e);
@@ -227,21 +229,23 @@ export default function AuditSystem() {
         cache: cacheRef.current
       };
 
-      // CRITICAL: Must use 'text/plain' with no-cors mode.
-      // 'application/json' triggers a CORS preflight which the browser blocks,
-      // meaning the POST never actually reaches Google Apps Script.
-      await fetch(GOOGLE_SHEETS_URL, {
+      // POST to our own Next.js API proxy (no CORS issues)
+      const response = await fetch(SYNC_API_URL, {
         method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      
-      console.log('✅ 送信完了 (GAS側で処理中)');
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('✅ 同期完了:', result.message);
+      } else {
+        console.warn('⚠️ 同期レスポンスエラー:', response.status);
+      }
     } catch (e) {
       console.error('❌ 同期エラー:', e);
     } finally {
-      setTimeout(() => setIsSyncing(false), 1500);
+      setTimeout(() => setIsSyncing(false), 1000);
     }
   };
 
