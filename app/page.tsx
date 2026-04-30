@@ -181,7 +181,7 @@ export default function AuditSystem() {
     try { localStorage.setItem('sol_enterprises', JSON.stringify(enterprises)); } catch { /* silent */ }
     try { localStorage.setItem('sol_cache', JSON.stringify(cacheRef.current)); } catch { /* silent */ }
 
-    const timeoutId = setTimeout(() => syncToCloud(), 5000);
+    const timeoutId = setTimeout(() => syncToCloud(), 2000);
     return () => clearTimeout(timeoutId);
   }, [enterprises, isAuthenticated, isInitialLoadDone]);
 
@@ -279,6 +279,8 @@ export default function AuditSystem() {
         };
       });
       saveCurrentToCache(fiscalYear, updated);
+      // Sync immediately after report save
+      setTimeout(() => syncToCloud(), 500);
       return updated;
     });
     setModalMode('none');
