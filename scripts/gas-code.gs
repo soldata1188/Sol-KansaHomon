@@ -48,13 +48,12 @@ function doPost(e) {
     var entSheet = ss.getSheetByName("Enterprises");
     if (!entSheet) entSheet = ss.insertSheet("Enterprises");
     entSheet.clearContents();
-    entSheet.appendRow(["ID", "企業名", "特定", "実2・3", "実1", "実1入国日"]);
+    entSheet.appendRow(["ID", "企業名", "特・実・育", "内1年目", "内1年目入国日"]);
     (data.enterprises || []).forEach(function(ent) {
       entSheet.appendRow([
         ent.id,
         ent.name,
-        ent.countTokutei || 0,
-        ent.countJisshu23 || 0,
+        (ent.countTokutei || 0) + (ent.countJisshu23 || 0),
         ent.countJisshu1 || 0,
         ent.entryDateJisshu1 || ""
       ]);
