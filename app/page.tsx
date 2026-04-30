@@ -185,17 +185,42 @@ export default function AuditSystem() {
     return () => clearTimeout(timeoutId);
   }, [enterprises, isAuthenticated, isInitialLoadDone]);
 
-  const syncToCloud = async () => {
-    if (enterprises.length === 0) return;
+  const syncToCloud = async (overrideEnts?: Enterprise[]) => {
+    const data = overrideEnts || enterprises;
+    if (data.length === 0) return;
     setIsSyncing(true);
-    console.log('🔄 同期を開始します...', { count: enterprises.length });
+    console.log('🔄 同期を開始します...', { count: data.length });
 
     try {
+      // Build a flat reports array for easy GAS processing
+      const reports = data.flatMap(ent =>
+        ent.schedule
+          .filter(c => c.status === 'completed' && c.report)
+          .map(c => ({
+            entId: ent.id,
+            entName: ent.name,
+            month: c.month,
+            type: c.type,
+            staff: c.report?.staff || '',
+            date: c.report?.date || '',
+            interviewee: c.report?.interviewee || '',
+            checkSalary: c.report?.checkSalary || '',
+            checkLog: c.report?.checkLog || '',
+            vStaff: c.report?.vStaff || '',
+            vDate: c.report?.vDate || '',
+            vInterviewee: c.report?.vInterviewee || '',
+            remarks: c.report?.remarks || ''
+          }))
+      );
+
       const payload = {
         timestamp: new Date().toISOString(),
-        enterprises,
-        cache: cacheRef.current
+        enterprises: data,
+        cache: cacheRef.current,
+        reports  // flat array — GAS reads this directly
       };
+
+      console.log(`📊 Reports to sync: ${reports.length}`);
 
       // POST to our own Next.js API proxy (no CORS issues)
       const response = await fetch(SYNC_API_URL, {
@@ -507,7 +532,7 @@ export default function AuditSystem() {
             </span>
           </h1>
           <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
-            <button className="btn" onClick={syncToCloud} disabled={isSyncing} style={{ fontSize: '0.75rem', padding: '0.5rem 0.8rem', background: 'white', border: '1px solid var(--card-border)' }}>🔄 同期</button>
+            <button className="btn" onClick={() => syncToCloud()} disabled={isSyncing} style={{ fontSize: '0.75rem', padding: '0.5rem 0.8rem', background: 'white', border: '1px solid var(--card-border)' }}>🔄 同期</button>
             <button className="btn btn-primary" onClick={() => { setTargetEnt({ id: '', name: '', countTokutei: 0, countJisshu23: 0, countJisshu1: 0, entryDateJisshu1: '', schedule: [] }); setModalMode('add'); }} style={{ fontSize: '0.75rem', padding: '0.5rem 0.8rem' }}>+ 企業登録</button>
             <button className="btn" onClick={() => { sessionStorage.removeItem('isLoggedIn'); window.location.reload(); }} style={{ fontSize: '0.75rem', padding: '0.5rem 0.8rem', background: '#f1f5f9', color: '#64748b' }}>ログアウト</button>
           </div>
