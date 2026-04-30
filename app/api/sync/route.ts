@@ -1,75 +1,253 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { supabase } from '@/lib/supabase';
 
-const GAS_URL =
-  process.env.GAS_URL ??
-  'https://script.google.com/macros/s/AKfycbwoaB1_RZ0nheTgUNptjVz-Cv6ysusph7C_LKl3HYC2__3EygtnIrdzxAXiatXCnI0jwg/exec';
+// ─────────────────────────────────────────────
+//  Types (mirror page.tsx — keep in sync)
+// ─────────────────────────────────────────────
+interface Report {
+  staff: string;
+  date: string;
+  interviewee: string;
+  checkSalary?: string;
+  checkLog?: string;
+  remarks?: string;
+  vStaff?: string;
+  vDate?: string;
+  vInterviewee?: string;
+}
 
-// GET: Load data from Google Sheets via server-side fetch (no CORS)
+interface ScheduleCell {
+  month: number;
+  type: 'audit' | 'visit' | 'none';
+  status: 'pending' | 'completed';
+  report?: Report;
+}
+
+interface Enterprise {
+  id: string;
+  name: string;
+  countTokutei: number;
+  countJisshu23: number;
+  countJisshu1: number;
+  entryDateJisshu1: string;
+  respName?: string;
+  respDate?: string;
+  instrName?: string;
+  instrDate?: string;
+  lifeName?: string;
+  lifeDate?: string;
+  schedule: ScheduleCell[];
+}
+
+// ─────────────────────────────────────────────
+//  GET — Load all data from Supabase
+// ─────────────────────────────────────────────
 export async function GET() {
   try {
-    // Server-side fetch follows redirects automatically - no CORS restrictions
-    const response = await fetch(GAS_URL, {
-      method: 'GET',
-      redirect: 'follow',
-      cache: 'no-store',
-      headers: {
-        'User-Agent': 'NextJS-Server/1.0',
-      },
+    // 1. Fetch enterprises
+    const { data: ents, error: entsErr } = await supabase
+      .from('enterprises')
+      .select('*')
+      .order('entry_date_jisshu1', { ascending: false, nullsFirst: false });
+
+    if (entsErr) throw entsErr;
+
+    // 2. Fetch all schedule cells
+    const { data: cells, error: cellsErr } = await supabase
+      .from('schedule_cells')
+      .select('*');
+
+    if (cellsErr) throw cellsErr;
+
+    // 3. Fetch all reports
+    const { data: reps, error: repsErr } = await supabase
+      .from('reports')
+      .select('*');
+
+    if (repsErr) throw repsErr;
+
+    // 4. Build cache object: { [year]: { [entId]: ScheduleCell[] } }
+    const cache: Record<number, Record<string, ScheduleCell[]>> = {};
+
+    // Index reports by key for fast lookup
+    const reportsMap = new Map<string, Report>();
+    (reps || []).forEach(r => {
+      const key = `${r.enterprise_id}:${r.fiscal_year}:${r.month}`;
+      reportsMap.set(key, {
+        staff:        r.staff || '',
+        date:         r.report_date || '',
+        interviewee:  r.interviewee || '',
+        checkSalary:  r.check_salary || 'none',
+        checkLog:     r.check_log || 'none',
+        remarks:      r.remarks || '',
+        vStaff:       r.v_staff || '',
+        vDate:        r.v_date || '',
+        vInterviewee: r.v_interviewee || '',
+      });
     });
 
-    const text = await response.text();
-    console.log('[API/sync GET] Status:', response.status, '| Body preview:', text.substring(0, 200));
+    (cells || []).forEach(c => {
+      if (!cache[c.fiscal_year]) cache[c.fiscal_year] = {};
+      if (!cache[c.fiscal_year][c.enterprise_id]) cache[c.fiscal_year][c.enterprise_id] = [];
+      const key = `${c.enterprise_id}:${c.fiscal_year}:${c.month}`;
+      cache[c.fiscal_year][c.enterprise_id].push({
+        month:  c.month,
+        type:   c.type,
+        status: c.status,
+        report: reportsMap.get(key),
+      });
+    });
 
-    // Try to parse as JSON
-    let data: { enterprises: unknown[]; cache: unknown };
-    try {
-      const parsed = JSON.parse(text);
-      data = {
-        enterprises: parsed.enterprises || [],
-        cache: parsed.cache || {},
-      };
-    } catch {
-      console.error('[API/sync GET] Failed to parse GAS response as JSON. Raw:', text.substring(0, 500));
-      data = { enterprises: [], cache: {} };
-    }
+    // Sort each cell array by month order [4..12, 1..3]
+    const MONTH_ORDER = [4,5,6,7,8,9,10,11,12,1,2,3];
+    Object.values(cache).forEach(yearObj => {
+      Object.keys(yearObj).forEach(entId => {
+        yearObj[entId].sort((a, b) => MONTH_ORDER.indexOf(a.month) - MONTH_ORDER.indexOf(b.month));
+      });
+    });
 
-    return NextResponse.json(data, {
-      headers: { 'Cache-Control': 'no-store' },
+    // 5. Map enterprises to frontend shape
+    const enterprises: Enterprise[] = (ents || []).map(e => ({
+      id:                 e.id,
+      name:               e.name,
+      countTokutei:       e.count_tokutei || 0,
+      countJisshu23:      e.count_jisshu23 || 0,
+      countJisshu1:       e.count_jisshu1 || 0,
+      entryDateJisshu1:   e.entry_date_jisshu1 || '',
+      respName:           e.resp_name || '',
+      respDate:           e.resp_date || '',
+      instrName:          e.instr_name || '',
+      instrDate:          e.instr_date || '',
+      lifeName:           e.life_name || '',
+      lifeDate:           e.life_date || '',
+      schedule:           [], // filled in by page.tsx loadScheduleWithReports
+    }));
+
+    return NextResponse.json({ enterprises, cache }, {
+      headers: { 'Cache-Control': 'no-store' }
     });
   } catch (error) {
-    console.error('[API/sync GET] Fetch error:', error);
+    console.error('[API/sync GET] Error:', error);
     return NextResponse.json(
       { enterprises: [], cache: {}, error: String(error) },
-      { status: 200 } // Return 200 so app doesn't crash, just gets empty data
+      { status: 200 }
     );
   }
 }
 
-// POST: Save data to Google Sheets via server-side fetch (no CORS)
+// ─────────────────────────────────────────────
+//  POST — Save all data to Supabase
+// ─────────────────────────────────────────────
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const payload = JSON.stringify(body);
+    const body: {
+      enterprises: Enterprise[];
+      cache: Record<number, Record<string, ScheduleCell[]>>;
+    } = await request.json();
 
-    console.log('[API/sync POST] Sending', body.enterprises?.length ?? 0, 'enterprises to GAS');
+    const { enterprises, cache } = body;
+    console.log('[API/sync POST] enterprises:', enterprises.length);
 
-    const response = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain',
-        'User-Agent': 'NextJS-Server/1.0',
-      },
-      body: payload,
-      redirect: 'follow',
+    // ── 1. Upsert enterprises ──────────────────────────────
+    const entRows = enterprises.map(e => ({
+      id:                   e.id,
+      name:                 e.name,
+      count_tokutei:        e.countTokutei || 0,
+      count_jisshu23:       e.countJisshu23 || 0,
+      count_jisshu1:        e.countJisshu1 || 0,
+      entry_date_jisshu1:   e.entryDateJisshu1 || null,
+      resp_name:            e.respName || null,
+      resp_date:            e.respDate || null,
+      instr_name:           e.instrName || null,
+      instr_date:           e.instrDate || null,
+      life_name:            e.lifeName || null,
+      life_date:            e.lifeDate || null,
+      updated_at:           new Date().toISOString(),
+    }));
+
+    const { error: entErr } = await supabase
+      .from('enterprises')
+      .upsert(entRows, { onConflict: 'id' });
+
+    if (entErr) throw entErr;
+
+    // ── 2. Upsert schedule_cells from cache ────────────────
+    const cellRows: {
+      enterprise_id: string;
+      fiscal_year: number;
+      month: number;
+      type: string;
+      status: string;
+    }[] = [];
+
+    Object.entries(cache).forEach(([yearStr, yearObj]) => {
+      const fiscal_year = Number(yearStr);
+      Object.entries(yearObj).forEach(([entId, cells]) => {
+        cells.forEach(cell => {
+          cellRows.push({
+            enterprise_id: entId,
+            fiscal_year,
+            month:  cell.month,
+            type:   cell.type,
+            status: cell.status,
+          });
+        });
+      });
     });
 
-    const text = await response.text();
-    console.log('[API/sync POST] GAS response status:', response.status, '| Body:', text.substring(0, 200));
+    if (cellRows.length > 0) {
+      // Process in chunks to avoid hitting request size limits
+      const CHUNK = 500;
+      for (let i = 0; i < cellRows.length; i += CHUNK) {
+        const chunk = cellRows.slice(i, i + CHUNK);
+        const { error: cellErr } = await supabase
+          .from('schedule_cells')
+          .upsert(chunk, { onConflict: 'enterprise_id,fiscal_year,month' });
+        if (cellErr) throw cellErr;
+      }
+    }
+
+    // ── 3. Upsert reports (only completed cells with report data) ──
+    const reportRows: Record<string, unknown>[] = [];
+
+    Object.entries(cache).forEach(([yearStr, yearObj]) => {
+      const fiscal_year = Number(yearStr);
+      Object.entries(yearObj).forEach(([entId, cells]) => {
+        cells.forEach(cell => {
+          if (cell.status === 'completed' && cell.report) {
+            const r = cell.report;
+            reportRows.push({
+              enterprise_id: entId,
+              fiscal_year,
+              month:         cell.month,
+              type:          cell.type,
+              staff:         r.staff || null,
+              report_date:   r.date || null,
+              interviewee:   r.interviewee || null,
+              check_salary:  r.checkSalary || null,
+              check_log:     r.checkLog || null,
+              v_staff:       r.vStaff || null,
+              v_date:        r.vDate || null,
+              v_interviewee: r.vInterviewee || null,
+              remarks:       r.remarks || null,
+            });
+          }
+        });
+      });
+    });
+
+    if (reportRows.length > 0) {
+      const { error: repErr } = await supabase
+        .from('reports')
+        .upsert(reportRows, { onConflict: 'enterprise_id,fiscal_year,month' });
+      if (repErr) throw repErr;
+    }
+
+    console.log(`[API/sync POST] Done — ${entRows.length} enterprises, ${cellRows.length} cells, ${reportRows.length} reports`);
 
     return NextResponse.json({
       success: true,
-      gasStatus: response.status,
-      message: text,
+      message: `同期完了: ${entRows.length}社 / ${cellRows.length}件のスケジュール / ${reportRows.length}件のレポート`
     });
   } catch (error) {
     console.error('[API/sync POST] Error:', error);
