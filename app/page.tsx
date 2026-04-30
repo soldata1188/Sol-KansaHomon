@@ -47,6 +47,7 @@ const formatShortDate = (d: string) => {
 };
 
 // --- Logic: Schedule (Manual only — no auto-generation) ---
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const calculateSchedule = (_ent: Enterprise, _fiscalYear: number): ScheduleCell[] => {
   // All cells start empty. Users assign 監査/訪問 manually.
   return MONTHS.map(m => ({ month: m, type: 'none' as TaskType, status: 'pending' as StatusType }));
@@ -97,6 +98,7 @@ export default function AuditSystem() {
     };
 
     const auth = safeGetSession('isLoggedIn');
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (auth === 'true') setIsAuthenticated(true);
 
     const now = new Date();
@@ -107,7 +109,7 @@ export default function AuditSystem() {
     const loadData = async () => {
       setIsSyncing(true);
       let cloudEnts: Enterprise[] = [];
-      let cloudCache: Record<string, any> = {};
+      let cloudCache: Record<string, Record<string, ScheduleCell[]>> = {};
 
       // Step 1: Fetch from Cloud via server-side proxy (no CORS issues)
       try {
@@ -124,7 +126,7 @@ export default function AuditSystem() {
 
       // Step 2: Try to read from LocalStorage (non-fatal if fails)
       let localEnts: Enterprise[] = [];
-      let localCache: Record<string, any> = {};
+      let localCache: Record<string, Record<string, ScheduleCell[]>> = {};
       try {
         const savedEntsRaw = safeGetLocal('sol_enterprises');
         const savedCacheRaw = safeGetLocal('sol_cache');
@@ -183,9 +185,10 @@ export default function AuditSystem() {
 
     const timeoutId = setTimeout(() => syncToCloud(), 2000);
     return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enterprises, isAuthenticated, isInitialLoadDone]);
 
-  const syncToCloud = async (overrideEnts?: Enterprise[]) => {
+  async function syncToCloud(overrideEnts?: Enterprise[]) {
     const data = overrideEnts || enterprises;
     if (data.length === 0) return;
     setIsSyncing(true);
@@ -242,7 +245,7 @@ export default function AuditSystem() {
     }
   };
 
-  const loadScheduleWithReports = (year: number, ents: Enterprise[]): Enterprise[] => {
+  function loadScheduleWithReports(year: number, ents: Enterprise[]): Enterprise[] {
     const yearCache = cacheRef.current[year] || {};
     return ents.map(ent => {
       const baseSchedule = calculateSchedule(ent, year);
@@ -546,7 +549,7 @@ export default function AuditSystem() {
           </div>
           <div style={{ display: 'flex', gap: '0.3rem' }}>
             {[{id:'all',label:'すべて'},{id:'audit',label:'監査'},{id:'visit',label:'訪問'},{id:'pending',label:'未完'}].map(f => (
-              <button key={f.id} onClick={() => setFilterMode(f.id as any)} style={{ padding: '0.3rem 0.6rem', borderRadius: '3px', fontSize: '0.7rem', fontWeight: '600', border: '1px solid', cursor: 'pointer', borderColor: filterMode === f.id ? 'var(--primary)' : 'var(--card-border)', background: filterMode === f.id ? 'var(--primary)' : 'white', color: filterMode === f.id ? 'white' : 'var(--text-main)' }}>{f.label}</button>
+              <button key={f.id} onClick={() => setFilterMode(f.id as 'all' | 'audit' | 'visit' | 'pending')} style={{ padding: '0.3rem 0.6rem', borderRadius: '3px', fontSize: '0.7rem', fontWeight: '600', border: '1px solid', cursor: 'pointer', borderColor: filterMode === f.id ? 'var(--primary)' : 'var(--card-border)', background: filterMode === f.id ? 'var(--primary)' : 'white', color: filterMode === f.id ? 'white' : 'var(--text-main)' }}>{f.label}</button>
             ))}
           </div>
           <div style={{ marginLeft: 'auto', fontSize: '0.7rem', color: 'var(--text-muted)' }}>表示: <strong>{filteredEnterprises.length}</strong> / {enterprises.length} 社</div>
@@ -583,7 +586,7 @@ export default function AuditSystem() {
               const isFirstMatch = searchTerm && idx === 0;
               const isMatching = searchTerm && ent.name.toLowerCase().includes(searchTerm.toLowerCase());
               return (
-                <tr key={ent.id} ref={isFirstMatch ? (scrollRef as any) : null} style={{ borderBottom: '1px solid var(--card-border)', background: isMatching ? '#fffbeb' : 'inherit' }}>
+                <tr key={ent.id} ref={isFirstMatch ? (scrollRef as React.RefObject<HTMLTableRowElement | null>) : null} style={{ borderBottom: '1px solid var(--card-border)', background: isMatching ? '#fffbeb' : 'inherit' }}>
                   <td style={{ fontSize: '0.7rem', borderRight: '1px solid var(--card-border)', color: '#94a3b8' }}>{idx + 1}</td>
                   <td className="sticky-col" style={{ textAlign: 'left', borderRight: '1px solid var(--card-border)', cursor: 'pointer', color: isMatching ? 'var(--status-amber)' : 'var(--primary)', fontWeight: 'bold', padding: '0.5rem 0.75rem', fontSize: '0.8rem', background: isMatching ? '#fffbeb' : 'white', position: 'sticky', left: 0, zIndex: 10 }}>{isMatching && '🎯 '}{ent.name}</td>
                   <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.8rem' }}>{ent.countTokutei}</td>
@@ -674,8 +677,8 @@ export default function AuditSystem() {
                                 style={{
                                   padding: '2px 10px', fontSize: '0.7rem',
                                   border: '1px solid var(--card-border)', borderRadius: '4px', cursor: 'pointer',
-                                  background: (tempReport as any)[key] === v ? (v === 'ok' ? 'var(--status-green)' : 'var(--status-red)') : 'white',
-                                  color: (tempReport as any)[key] === v ? 'white' : 'inherit',
+                                  background: tempReport[key as keyof ReportData] === v ? (v === 'ok' ? 'var(--status-green)' : 'var(--status-red)') : 'white',
+                                  color: tempReport[key as keyof ReportData] === v ? 'white' : 'inherit',
                                   fontWeight: 'bold'
                                 }}
                               >
