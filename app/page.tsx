@@ -148,7 +148,12 @@ export default function AnnualScheduleMatrix() {
         if (cloudData && cloudData.enterprises && cloudData.enterprises.length > 0) {
           console.log('クラウドからロードしました:', cloudData.enterprises.length, '社');
           cacheRef.current = cloudData.cache || {};
-          const sorted = [...cloudData.enterprises].sort((a, b) => a.name.localeCompare(b.name, 'ja'));
+          const sorted = [...cloudData.enterprises].sort((a, b) => {
+            if (!a.entryDateJisshu1 && !b.entryDateJisshu1) return a.name.localeCompare(b.name, 'ja');
+            if (!a.entryDateJisshu1) return 1;
+            if (!b.entryDateJisshu1) return -1;
+            return b.entryDateJisshu1.localeCompare(a.entryDateJisshu1);
+          });
           setEnterprises(loadScheduleWithReports(currentFY, sorted));
           localStorage.setItem('sol_enterprises', JSON.stringify(sorted));
           localStorage.setItem('sol_cache', JSON.stringify(cloudData.cache || {}));
@@ -159,7 +164,12 @@ export default function AnnualScheduleMatrix() {
           if (savedEnts) {
             console.warn('ローカルストレージからデータを復元しました');
             if (savedCache) cacheRef.current = JSON.parse(savedCache);
-            const sorted = JSON.parse(savedEnts).sort((a: any, b: any) => a.name.localeCompare(b.name, 'ja'));
+            const sorted = JSON.parse(savedEnts).sort((a: any, b: any) => {
+              if (!a.entryDateJisshu1 && !b.entryDateJisshu1) return a.name.localeCompare(b.name, 'ja');
+              if (!a.entryDateJisshu1) return 1;
+              if (!b.entryDateJisshu1) return -1;
+              return b.entryDateJisshu1.localeCompare(a.entryDateJisshu1);
+            });
             setEnterprises(loadScheduleWithReports(currentFY, sorted));
           }
         }
@@ -268,7 +278,12 @@ export default function AnnualScheduleMatrix() {
       } else {
         next = prev.map(e => (e.id === targetEnt.id ? { ...e, ...targetEnt, schedule: calculateSchedule(targetEnt, fiscalYear) } : e));
       }
-      return next.sort((a, b) => a.name.localeCompare(b.name, 'ja'));
+      return next.sort((a, b) => {
+        if (!a.entryDateJisshu1 && !b.entryDateJisshu1) return a.name.localeCompare(b.name, 'ja');
+        if (!a.entryDateJisshu1) return 1;
+        if (!b.entryDateJisshu1) return -1;
+        return b.entryDateJisshu1.localeCompare(a.entryDateJisshu1);
+      });
     });
     setModalMode('none');
   };
