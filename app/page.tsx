@@ -322,7 +322,7 @@ export default function AuditSystem() {
   };
 
   const handleAutoFillAudits = () => {
-    if (!confirm('直近の監査実施日に基づき、3ヶ月ごとに監査スケジュールを自動補完しますか？\n（すでに登録されている予定は上書きされません）')) return;
+    if (!confirm('直近の監査実施日に基づき、3ヶ月ごとに監査スケジュールを自動補完しますか？\n（未完了の「訪問」予定がある場合は、「監査」として上書きされます）')) return;
 
     let updatedCount = 0;
     const newCache = { ...cacheRef.current };
@@ -377,7 +377,7 @@ export default function AuditSystem() {
         const schedule = getScheduleForYear(ent, fy);
         const cell = schedule.find(c => c.month === m);
         
-        if (cell && cell.type === 'none') {
+        if (cell && (cell.type === 'none' || (cell.type === 'visit' && cell.status === 'pending'))) {
           cell.type = 'audit';
           cell.status = 'pending';
           updatedCount++;
