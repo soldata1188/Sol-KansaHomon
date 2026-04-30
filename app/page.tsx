@@ -33,6 +33,12 @@ interface Enterprise {
   countJisshu23: number;
   countJisshu1: number;
   entryDateJisshu1: string; // YYYY-MM-DD
+  respName?: string;
+  respDate?: string;
+  instrName?: string;
+  instrDate?: string;
+  lifeName?: string;
+  lifeDate?: string;
   schedule: ScheduleCell[];
 }
 
@@ -680,6 +686,33 @@ export default function AuditSystem() {
               <div>
                 <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>内1年目入国日</label>
                 <input type="date" value={targetEnt.entryDateJisshu1} onChange={e => setTargetEnt({...targetEnt, entryDateJisshu1: e.target.value})} style={inputStyle} />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>責任者</label>
+                  <input type="text" placeholder="氏名" value={targetEnt.respName || ''} onChange={e => setTargetEnt({...targetEnt, respName: e.target.value})} style={inputStyle} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>責任受講日</label>
+                  <input type="date" value={targetEnt.respDate || ''} onChange={e => setTargetEnt({...targetEnt, respDate: e.target.value})} style={inputStyle} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>指導員</label>
+                  <input type="text" placeholder="氏名" value={targetEnt.instrName || ''} onChange={e => setTargetEnt({...targetEnt, instrName: e.target.value})} style={inputStyle} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>指導受講日</label>
+                  <input type="date" value={targetEnt.instrDate || ''} onChange={e => setTargetEnt({...targetEnt, instrDate: e.target.value})} style={inputStyle} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>生活員</label>
+                  <input type="text" placeholder="氏名" value={targetEnt.lifeName || ''} onChange={e => setTargetEnt({...targetEnt, lifeName: e.target.value})} style={inputStyle} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>生活受講日</label>
+                  <input type="date" value={targetEnt.lifeDate || ''} onChange={e => setTargetEnt({...targetEnt, lifeDate: e.target.value})} style={inputStyle} />
+                </div>
               </div>
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
                 <button className="btn" style={{ flex: 1 }} onClick={() => setModalMode('none')}>キャンセル</button>

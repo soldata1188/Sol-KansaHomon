@@ -48,14 +48,20 @@ function doPost(e) {
     var entSheet = ss.getSheetByName("Enterprises");
     if (!entSheet) entSheet = ss.insertSheet("Enterprises");
     entSheet.clearContents();
-    entSheet.appendRow(["ID", "企業名", "特・実・育", "内1年目", "内1年目入国日"]);
+    entSheet.appendRow(["ID", "企業名", "特・実・育", "内1年目", "内1年目入国日", "責任者", "責任受講日", "指導員", "指導受講日", "生活員", "生活受講日"]);
     (data.enterprises || []).forEach(function(ent) {
       entSheet.appendRow([
         ent.id,
         ent.name,
         (ent.countTokutei || 0) + (ent.countJisshu23 || 0),
         ent.countJisshu1 || 0,
-        ent.entryDateJisshu1 || ""
+        ent.entryDateJisshu1 || "",
+        ent.respName || "",
+        ent.respDate || "",
+        ent.instrName || "",
+        ent.instrDate || "",
+        ent.lifeName || "",
+        ent.lifeDate || ""
       ]);
     });
 
