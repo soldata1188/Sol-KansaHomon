@@ -681,7 +681,7 @@ export default function AnnualScheduleMatrix() {
             </div>
             <div style={{ marginTop: '1.5rem', display: 'flex', gap: '0.75rem' }}>
               <button onClick={handleRemoveSchedule} style={{ flex: '0 0 auto', padding: '0.6rem 0.8rem', border: '1px solid var(--status-red)', borderRadius: '4px', background: 'white', color: 'var(--status-red)', cursor: 'pointer', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>スケジュール解除</button>
-              <button className="btn btn-primary" onClick={handleSaveReport} style={{ flex: 1, padding: '0.6rem' }}>報告書を保存</button>
+              <button className="btn btn-primary" onClick={handleSaveReport} style={{ flex: 1, padding: '0.6rem' }}>保存</button>
             </div>
           </div>
         </div>
