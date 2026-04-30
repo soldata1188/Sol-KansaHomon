@@ -321,6 +321,80 @@ export default function AuditSystem() {
     setModalMode('none');
   };
 
+  const handleAutoFillAudits = () => {
+    if (!confirm('直近の監査実施日に基づき、3ヶ月ごとに監査スケジュールを自動補完しますか？\n（すでに登録されている予定は上書きされません）')) return;
+
+    let updatedCount = 0;
+    const newCache = { ...cacheRef.current };
+
+    const getScheduleForYear = (ent: Enterprise, year: number) => {
+      if (!newCache[year]) newCache[year] = {};
+      if (!newCache[year][ent.id]) {
+        newCache[year][ent.id] = calculateSchedule(ent, year);
+      }
+      return newCache[year][ent.id];
+    };
+
+    enterprises.forEach(ent => {
+      let latestDate: Date | null = null;
+      
+      // Search across all years in cache
+      Object.keys(newCache).forEach(yearStr => {
+        const sch = newCache[Number(yearStr)][ent.id];
+        if (sch) {
+          sch.forEach(cell => {
+            if (cell.type === 'audit' && cell.status === 'completed' && cell.report?.date) {
+              const d = new Date(cell.report.date);
+              if (!latestDate || d > latestDate) latestDate = d;
+            }
+          });
+        }
+      });
+
+      // Also check current active enterprises array just in case
+      ent.schedule.forEach(cell => {
+        if (cell.type === 'audit' && cell.status === 'completed' && cell.report?.date) {
+          const d = new Date(cell.report.date);
+          if (!latestDate || d > latestDate) latestDate = d;
+        }
+      });
+
+      if (!latestDate) return;
+
+      const targetMaxDate = new Date(fiscalYear + 1, 2, 31); // March 31 of next year
+      let nextDate = new Date(latestDate);
+      let safetyCounter = 0;
+      
+      while (nextDate <= targetMaxDate && safetyCounter < 100) {
+        safetyCounter++;
+        nextDate.setMonth(nextDate.getMonth() + 3);
+        
+        const y = nextDate.getFullYear();
+        const m = nextDate.getMonth() + 1;
+        const fy = m >= 4 ? y : y - 1;
+        
+        // We only populate if it's not too far in the past, or just populate everything up to max date
+        const schedule = getScheduleForYear(ent, fy);
+        const cell = schedule.find(c => c.month === m);
+        
+        if (cell && cell.type === 'none') {
+          cell.type = 'audit';
+          cell.status = 'pending';
+          updatedCount++;
+        }
+      }
+    });
+
+    if (updatedCount > 0) {
+      cacheRef.current = newCache;
+      setEnterprises(loadScheduleWithReports(fiscalYear, enterprises));
+      setTimeout(() => syncToCloud(), 500);
+      alert(`${updatedCount}件の「監査」を自動補完しました。`);
+    } else {
+      alert('自動補完できる対象がありませんでした（履歴がない、またはすべて登録済みです）。');
+    }
+  };
+
   const handleAutoFillVisits = () => {
     if (!confirm('実1入国日に基づいて、入国月から12ヶ月間の「訪問」スケジュールを自動補完しますか？\n（すでに登録されている予定は上書きされません）')) return;
 
@@ -689,9 +763,14 @@ export default function AuditSystem() {
             <div style={{ padding: '0 0.75rem', fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--primary)' }}>{fiscalYear}年度</div>
             <button onClick={() => changeFiscalYear(1)} style={{ padding: '4px 8px', border: 'none', borderRadius: '3px', background: 'white', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}>翌年 ▶</button>
           </div>
-          <button onClick={handleAutoFillVisits} style={{ padding: '0.3rem 0.6rem', border: '1px solid #c2e7ff', borderRadius: '3px', background: '#f1f8ff', color: '#0061c1', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-            <span>⚙️</span> 訪問を自動補完 (入国から12ヶ月)
-          </button>
+          <div style={{ display: 'flex', gap: '0.4rem' }}>
+            <button onClick={handleAutoFillAudits} style={{ padding: '0.3rem 0.6rem', border: '1px solid #fde047', borderRadius: '3px', background: '#fefce8', color: '#a16207', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+              <span>⚙️</span> 監査を自動補完 (3ヶ月)
+            </button>
+            <button onClick={handleAutoFillVisits} style={{ padding: '0.3rem 0.6rem', border: '1px solid #c2e7ff', borderRadius: '3px', background: '#f1f8ff', color: '#0061c1', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+              <span>⚙️</span> 訪問を自動補完 (12ヶ月)
+            </button>
+          </div>
         </div>
 
         {/* View Toggle */}
