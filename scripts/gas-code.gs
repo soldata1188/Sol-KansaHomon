@@ -48,9 +48,11 @@ function doPost(e) {
     var entSheet = ss.getSheetByName("Enterprises");
     if (!entSheet) entSheet = ss.insertSheet("Enterprises");
     entSheet.clearContents();
-    entSheet.appendRow(["ID", "企業名", "特・実・育", "内1年目", "内1年目入国日", "責任者", "責任受講日", "指導員", "指導受講日", "生活員", "生活受講日"]);
+    var monthHeaders = [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3].map(function(m) { return m + "月"; });
+    entSheet.appendRow(["ID", "企業名", "特・実・育", "内1年目", "内1年目入国日", "責任者", "責任受講日", "指導員", "指導受講日", "生活員", "生活受講日"].concat(monthHeaders));
+    
     (data.enterprises || []).forEach(function(ent) {
-      entSheet.appendRow([
+      var row = [
         ent.id,
         ent.name,
         (ent.countTokutei || 0) + (ent.countJisshu23 || 0),
@@ -62,7 +64,25 @@ function doPost(e) {
         ent.instrDate || "",
         ent.lifeName || "",
         ent.lifeDate || ""
-      ]);
+      ];
+      
+      var scheduleMap = {};
+      (ent.schedule || []).forEach(function(c) {
+        scheduleMap[c.month] = c;
+      });
+      
+      [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3].forEach(function(m) {
+        var c = scheduleMap[m];
+        if (!c || c.type === 'none') {
+          row.push("");
+        } else {
+          var mark = c.type === 'audit' ? "監査" : "訪問";
+          if (c.status === 'completed') mark += "(済)";
+          row.push(mark);
+        }
+      });
+      
+      entSheet.appendRow(row);
     });
 
     // ── 3. Update Reports sheet from data.reports (flat array) ──
