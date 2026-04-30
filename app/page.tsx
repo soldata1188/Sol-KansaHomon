@@ -221,17 +221,19 @@ export default function AuditSystem() {
     console.log('🔄 同期を開始します...', { count: enterprises.length });
 
     try {
-      // Thêm timestamp để kiểm soát phiên bản gửi
       const payload = {
         timestamp: new Date().toISOString(),
         enterprises,
         cache: cacheRef.current
       };
 
+      // CRITICAL: Must use 'text/plain' with no-cors mode.
+      // 'application/json' triggers a CORS preflight which the browser blocks,
+      // meaning the POST never actually reaches Google Apps Script.
       await fetch(GOOGLE_SHEETS_URL, {
         method: 'POST',
         mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(payload)
       });
       
@@ -239,7 +241,6 @@ export default function AuditSystem() {
     } catch (e) {
       console.error('❌ 同期エラー:', e);
     } finally {
-      // Giả lập thời gian chờ để GAS kịp xử lý
       setTimeout(() => setIsSyncing(false), 1500);
     }
   };
