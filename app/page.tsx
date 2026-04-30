@@ -130,6 +130,14 @@ export default function AnnualScheduleMatrix() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterMode, setFilterMode] = useState<'all' | 'audit' | 'visit' | 'pending'>('all');
+  const scrollRef = useRef<HTMLTableRowElement | null>(null);
+
+  // --- Smart Search Scroll Effect ---
+  useEffect(() => {
+    if (searchTerm && scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [searchTerm]);
 
   useEffect(() => {
     const auth = sessionStorage.getItem('isLoggedIn');
@@ -422,6 +430,43 @@ export default function AnnualScheduleMatrix() {
           </div>
         </div>
       ))}
+    </div>
+  );
+
+  const renderMobileView = () => (
+    <div className="mobile-only" style={{ overflowY: 'auto', flex: 1, marginTop: '0.5rem' }}>
+      {filteredEnterprises.map((ent, idx) => {
+        const isFirstMatch = searchTerm && idx === 0;
+        const isMatching = searchTerm && ent.name.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        return (
+          <div 
+            key={ent.id} 
+            ref={isFirstMatch ? scrollRef : null}
+            className="enterprise-card" 
+            style={{ 
+              padding: '0.75rem', 
+              marginBottom: '0.75rem',
+              transition: 'all 0.5s ease',
+              border: isMatching ? '2px solid var(--status-amber)' : '1px solid var(--card-border)',
+              boxShadow: isMatching ? '0 0 15px rgba(217, 119, 6, 0.2)' : '0 1px 3px rgba(0,0,0,0.05)',
+              background: isMatching ? '#fffbeb' : 'white'
+            }}
+          >
+            <div className="card-header" style={{ marginBottom: '0.5rem', paddingBottom: '0.4rem', borderBottom: '1px solid #f1f5f9' }} onClick={() => { setTargetEnt(ent); setModalMode('edit'); }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontWeight: 'bold', color: isMatching ? 'var(--status-amber)' : 'var(--primary)', fontSize: '0.9rem' }}>
+                  {isMatching && '🎯 '}{ent.name}
+                </span>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{ent.entryDateJisshu1 || '-'}</span>
+              </div>
+            </div>
+            <div className="month-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.4rem' }}>
+              {ent.schedule.map(cell => renderMobileMonthCell(cell, ent))}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 
@@ -810,25 +855,55 @@ export default function AnnualScheduleMatrix() {
             </tr>
           </thead>
           <tbody>
-            {enterprises.map((ent, idx) => (
-              <tr key={ent.id} style={{ borderBottom: '1px solid var(--card-border)' }}>
-                <td style={{ fontSize: '0.7rem', borderRight: '1px solid var(--card-border)', color: 'var(--text-muted)' }}>{idx + 1}</td>
-                <td className="sticky-col" style={{ textAlign: 'left', borderRight: '1px solid var(--card-border)', cursor: 'pointer', color: 'var(--primary)', fontWeight: 'bold', padding: '0.5rem 0.75rem', fontSize: '0.8rem' }} onClick={() => { setTargetEnt(ent); setModalMode('edit'); }}>{ent.name}</td>
-                <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.8rem', fontWeight: 'bold' }}>{ent.countTokutei}</td>
-                <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.8rem', fontWeight: 'bold' }}>{ent.countJisshu23}</td>
-                <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.8rem', fontWeight: 'bold' }}>{ent.countJisshu1}</td>
-                <td style={{ fontSize: '0.75rem', borderRight: '1px solid var(--card-border)', color: 'var(--primary)', fontWeight: 'bold' }}>{ent.entryDateJisshu1 || '-'}</td>
-                {ent.schedule.map((cell, sIdx) => (
-                  <td key={sIdx} style={{
-                    borderRight: '1px solid var(--card-border)', padding: '2px',
-                    background: cell.month === currentMonth ? '#fffafa' : 'inherit',
-                    height: '42px'
-                  }}>
-                    {renderCellContent(cell, ent)}
+            {filteredEnterprises.map((ent, idx) => {
+              const isFirstMatch = searchTerm && idx === 0;
+              const isMatching = searchTerm && ent.name.toLowerCase().includes(searchTerm.toLowerCase());
+              
+              return (
+                <tr 
+                  key={ent.id} 
+                  ref={isFirstMatch ? scrollRef : null}
+                  style={{ 
+                    borderBottom: '1px solid var(--card-border)',
+                    transition: 'all 0.5s ease',
+                    background: isMatching ? '#fffbeb' : 'inherit'
+                  }}
+                >
+                  <td style={{ fontSize: '0.7rem', borderRight: '1px solid var(--card-border)', color: 'var(--text-muted)' }}>{idx + 1}</td>
+                  <td 
+                    className="sticky-col" 
+                    style={{ 
+                      textAlign: 'left', 
+                      borderRight: '1px solid var(--card-border)', 
+                      cursor: 'pointer', 
+                      color: isMatching ? 'var(--status-amber)' : 'var(--primary)', 
+                      fontWeight: 'bold', 
+                      padding: '0.5rem 0.75rem', 
+                      fontSize: '0.8rem',
+                      background: isMatching ? '#fffbeb' : 'white',
+                      transition: 'all 0.5s ease',
+                      boxShadow: isMatching ? 'inset 0 0 1px 1px var(--status-amber)' : '2px 0 5px rgba(0,0,0,0.05)'
+                    }} 
+                    onClick={() => { setTargetEnt(ent); setModalMode('edit'); }}
+                  >
+                    {isMatching && '🎯 '}{ent.name}
                   </td>
-                ))}
-              </tr>
-            ))}
+                  <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.8rem', fontWeight: 'bold' }}>{ent.countTokutei}</td>
+                  <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.8rem', fontWeight: 'bold' }}>{ent.countJisshu23}</td>
+                  <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.8rem', fontWeight: 'bold' }}>{ent.countJisshu1}</td>
+                  <td style={{ fontSize: '0.75rem', borderRight: '1px solid var(--card-border)', color: 'var(--primary)', fontWeight: 'bold' }}>{ent.entryDateJisshu1 || '-'}</td>
+                  {ent.schedule.map((cell, sIdx) => (
+                    <td key={sIdx} style={{
+                      borderRight: '1px solid var(--card-border)', padding: '2px',
+                      background: cell.month === currentMonth ? '#fffafa' : 'inherit',
+                      height: '42px'
+                    }}>
+                      {renderCellContent(cell, ent)}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
