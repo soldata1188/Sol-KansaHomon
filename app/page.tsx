@@ -314,6 +314,55 @@ export default function AuditSystem() {
     setModalMode('none');
   };
 
+  const handleAutoFillVisits = () => {
+    if (!confirm('実1入国日に基づいて、入国月から12ヶ月間の「訪問」スケジュールを自動補完しますか？\n（すでに登録されている予定は上書きされません）')) return;
+
+    let updatedCount = 0;
+    const newCache = { ...cacheRef.current };
+
+    const getScheduleForYear = (ent: Enterprise, year: number) => {
+      if (!newCache[year]) newCache[year] = {};
+      if (!newCache[year][ent.id]) {
+        newCache[year][ent.id] = calculateSchedule(ent, year);
+      }
+      return newCache[year][ent.id];
+    };
+
+    enterprises.forEach(ent => {
+      if (!ent.entryDateJisshu1) return;
+      const entryDate = new Date(ent.entryDateJisshu1);
+      let y = entryDate.getFullYear();
+      let m = entryDate.getMonth() + 1;
+
+      for (let i = 0; i < 12; i++) {
+        const fy = m >= 4 ? y : y - 1;
+        const schedule = getScheduleForYear(ent, fy);
+        const cell = schedule.find(c => c.month === m);
+        
+        if (cell && cell.type === 'none') {
+          cell.type = 'visit';
+          cell.status = 'pending';
+          updatedCount++;
+        }
+
+        m++;
+        if (m > 12) {
+          m = 1;
+          y++;
+        }
+      }
+    });
+
+    if (updatedCount > 0) {
+      cacheRef.current = newCache;
+      setEnterprises(loadScheduleWithReports(fiscalYear, enterprises));
+      setTimeout(() => syncToCloud(), 500);
+      alert(`${updatedCount}件の「訪問」を自動補完しました。`);
+    } else {
+      alert('自動補完できる対象がありませんでした（すべて登録済みか、入国日が未設定です）。');
+    }
+  };
+
   const handleSetType = (newType: TaskType) => {
     if (!selectedCell) return;
     setEnterprises(prev => {
@@ -562,6 +611,9 @@ export default function AuditSystem() {
             <div style={{ padding: '0 0.75rem', fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--primary)' }}>{fiscalYear}年度</div>
             <button onClick={() => changeFiscalYear(1)} style={{ padding: '4px 8px', border: 'none', borderRadius: '3px', background: 'white', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}>翌年 ▶</button>
           </div>
+          <button onClick={handleAutoFillVisits} style={{ padding: '0.3rem 0.6rem', border: '1px solid #c2e7ff', borderRadius: '3px', background: '#f1f8ff', color: '#0061c1', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+            <span>⚙️</span> 訪問を自動補完 (入国から12ヶ月)
+          </button>
         </div>
       </header>
 
