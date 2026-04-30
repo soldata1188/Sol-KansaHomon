@@ -677,8 +677,8 @@ export default function AuditSystem() {
                                 style={{
                                   padding: '2px 10px', fontSize: '0.7rem',
                                   border: '1px solid var(--card-border)', borderRadius: '4px', cursor: 'pointer',
-                                  background: tempReport[key as keyof ReportData] === v ? (v === 'ok' ? 'var(--status-green)' : 'var(--status-red)') : 'white',
-                                  color: tempReport[key as keyof ReportData] === v ? 'white' : 'inherit',
+                                  background: tempReport[key as keyof Report] === v ? (v === 'ok' ? 'var(--status-green)' : 'var(--status-red)') : 'white',
+                                  color: tempReport[key as keyof Report] === v ? 'white' : 'inherit',
                                   fontWeight: 'bold'
                                 }}
                               >
