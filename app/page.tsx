@@ -284,14 +284,25 @@ export default function AuditSystem() {
   };
 
   const handleSaveEnterprise = () => {
-    if (!targetEnt.name) return;
+    if (!targetEnt.name.trim()) return;
+
+    // Duplicate name check
+    const trimmed = targetEnt.name.trim();
+    const duplicate = enterprises.find(e =>
+      e.name.toLowerCase() === trimmed.toLowerCase() && e.id !== targetEnt.id
+    );
+    if (duplicate) {
+      alert(`「${trimmed}」はすでに登録されています。企業名の重複はできません。`);
+      return;
+    }
+
     setEnterprises(prev => {
       let next;
       if (!targetEnt.id) {
-        const fullNewEnt = { ...targetEnt, id: 'ENT' + Date.now(), schedule: calculateSchedule(targetEnt, fiscalYear) };
+        const fullNewEnt = { ...targetEnt, id: 'ENT' + Date.now(), name: trimmed, schedule: calculateSchedule(targetEnt, fiscalYear) };
         next = [...prev, fullNewEnt];
       } else {
-        next = prev.map(e => (e.id === targetEnt.id ? { ...e, ...targetEnt, schedule: calculateSchedule(targetEnt, fiscalYear) } : e));
+        next = prev.map(e => (e.id === targetEnt.id ? { ...e, ...targetEnt, name: trimmed, schedule: calculateSchedule(targetEnt, fiscalYear) } : e));
       }
       return next.sort((a, b) => {
         if (!a.entryDateJisshu1 && !b.entryDateJisshu1) return a.name.localeCompare(b.name, 'ja');
@@ -303,7 +314,35 @@ export default function AuditSystem() {
     setModalMode('none');
   };
 
+  const handleDeleteEnterprise = (ent: Enterprise) => {
+    if (!confirm(`「${ent.name}」を削除します。\nこの企業の全スケジュール・報告も削除されます。\n本当に削除しますか？`)) return;
+
+    // Remove from cache
+    const newCache = { ...cacheRef.current };
+    Object.keys(newCache).forEach(year => {
+      if (newCache[Number(year)]) delete newCache[Number(year)][ent.id];
+    });
+    cacheRef.current = newCache;
+
+    const updatedEnts = enterprises.filter(e => e.id !== ent.id);
+    try {
+      localStorage.setItem('sol_enterprises', JSON.stringify(updatedEnts));
+      localStorage.setItem('sol_cache', JSON.stringify(newCache));
+    } catch { /* silent */ }
+
+    // Delete from Supabase
+    fetch('/api/delete-enterprise', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: ent.id })
+    }).catch(() => { /* silent */ });
+
+    setEnterprises(updatedEnts);
+    setModalMode('none');
+  };
+
   const handleSaveReport = () => {
+
     if (!selectedCell) return;
     setEnterprises(prev => {
       const updated = prev.map(ent => {
@@ -908,6 +947,9 @@ export default function AuditSystem() {
               </div>
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
                 <button className="btn" style={{ flex: 1 }} onClick={() => setModalMode('none')}>キャンセル</button>
+                {modalMode === 'edit' && (
+                  <button className="btn" style={{ background: '#fff5f5', color: '#dc2626', border: '1px solid #fecaca' }} onClick={() => handleDeleteEnterprise(targetEnt)}>🗑️ 削除</button>
+                )}
                 <button className="btn btn-primary" style={{ flex: 1 }} onClick={handleSaveEnterprise}>保存</button>
               </div>
             </div>
