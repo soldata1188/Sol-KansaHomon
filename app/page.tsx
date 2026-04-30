@@ -46,33 +46,10 @@ const formatShortDate = (d: string) => {
   return parts.length === 3 ? `${parts[1]}/${parts[2]}` : d;
 };
 
-// --- Logic: Automated Scheduling ---
-const calculateSchedule = (ent: Enterprise, fiscalYear: number): ScheduleCell[] => {
-  const schedule: ScheduleCell[] = MONTHS.map(m => ({ month: m, type: 'none', status: 'pending' }));
-  if (!ent.entryDateJisshu1) return schedule;
-
-  const entryDate = new Date(ent.entryDateJisshu1);
-  const entryMonth = entryDate.getMonth() + 1;
-  const entryYear = entryDate.getFullYear();
-
-  MONTHS.forEach(m => {
-    const targetYear = m >= 4 ? fiscalYear : fiscalYear + 1;
-    const targetDate = new Date(targetYear, m - 1, 1);
-    
-    // 1. Visit every month (Default)
-    let type: TaskType = 'visit';
-
-    // 2. Audit every 3 months starting from entry month
-    const monthsSinceEntry = (targetYear * 12 + m) - (entryYear * 12 + entryMonth);
-    if (monthsSinceEntry >= 0 && monthsSinceEntry % 3 === 0) {
-      type = 'audit';
-    }
-
-    const cell = schedule.find(c => c.month === m);
-    if (cell) cell.type = type;
-  });
-
-  return schedule;
+// --- Logic: Schedule (Manual only — no auto-generation) ---
+const calculateSchedule = (_ent: Enterprise, _fiscalYear: number): ScheduleCell[] => {
+  // All cells start empty. Users assign 監査/訪問 manually.
+  return MONTHS.map(m => ({ month: m, type: 'none' as TaskType, status: 'pending' as StatusType }));
 };
 
 // --- Main Component ---
@@ -555,7 +532,6 @@ export default function AuditSystem() {
             <div style={{ padding: '0 0.75rem', fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--primary)' }}>{fiscalYear}年度</div>
             <button onClick={() => changeFiscalYear(1)} style={{ padding: '4px 8px', border: 'none', borderRadius: '3px', background: 'white', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}>翌年 ▶</button>
           </div>
-          <button onClick={() => { if(confirm('自動補完しますか？')) { /* Logic */ } }} style={{ padding: '0.3rem 0.6rem', border: '1px solid #c2e7ff', borderRadius: '3px', background: '#f1f8ff', color: '#0061c1', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '600' }}>⚙ 自動補完</button>
         </div>
       </header>
 
