@@ -624,9 +624,9 @@ export default function AuditSystem() {
             <tr>
               <th style={{ width: '30px', borderRight: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)', padding: '0.4rem 0', fontSize: '0.7rem' }}>No</th>
               <th className="sticky-col" style={{ textAlign: 'left', width: '160px', borderRight: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)', padding: '0.4rem 0.75rem', fontSize: '0.8rem', background: '#f8fafc' }}>企業名</th>
-              <th style={{ width: '60px', borderRight: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)', fontSize: '0.7rem' }}>特・実23</th>
-              <th style={{ width: '40px', borderRight: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)', fontSize: '0.7rem' }}>実1</th>
-              <th style={{ width: '70px', borderRight: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)', fontSize: '0.7rem' }}>実1入国</th>
+              <th style={{ width: '60px', borderRight: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)', fontSize: '0.7rem' }}>特・実・育</th>
+              <th style={{ width: '40px', borderRight: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)', fontSize: '0.7rem' }}>内1年目</th>
+              <th style={{ width: '70px', borderRight: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)', fontSize: '0.7rem' }}>内1年目入国</th>
               {MONTHS.map(m => (
                 <th key={m} style={{ borderRight: '1px solid var(--card-border)', width: '50px', borderBottom: m === currentMonth ? '2px solid var(--status-red)' : '1px solid var(--card-border)', background: m === currentMonth ? 'var(--status-red-bg)' : 'inherit', fontSize: '0.75rem' }}>{m}月</th>
               ))}
@@ -669,16 +669,16 @@ export default function AuditSystem() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>特・実23</label>
+                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>特・実・育</label>
                   <input type="number" placeholder="0" value={targetEnt.countTokutei + targetEnt.countJisshu23} onChange={e => setTargetEnt({...targetEnt, countTokutei: parseInt(e.target.value)||0, countJisshu23: 0})} style={inputStyle} />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>実1</label>
+                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>内1年目</label>
                   <input type="number" placeholder="0" value={targetEnt.countJisshu1} onChange={e => setTargetEnt({...targetEnt, countJisshu1: parseInt(e.target.value)||0})} style={inputStyle} />
                 </div>
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>実1入国日</label>
+                <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>内1年目入国日</label>
                 <input type="date" value={targetEnt.entryDateJisshu1} onChange={e => setTargetEnt({...targetEnt, entryDateJisshu1: e.target.value})} style={inputStyle} />
               </div>
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
