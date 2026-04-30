@@ -116,7 +116,18 @@ export default function AuditSystem() {
   }, [searchTerm]);
 
   useEffect(() => {
-    const auth = sessionStorage.getItem('isLoggedIn');
+    // Safe wrapper for storage access (fails in some private browsers)
+    const safeGetSession = (key: string): string | null => {
+      try { return sessionStorage.getItem(key); } catch { return null; }
+    };
+    const safeGetLocal = (key: string): string | null => {
+      try { return localStorage.getItem(key); } catch { return null; }
+    };
+    const safeSetLocal = (key: string, value: string) => {
+      try { localStorage.setItem(key, value); } catch { /* silent */ }
+    };
+
+    const auth = safeGetSession('isLoggedIn');
     if (auth === 'true') setIsAuthenticated(true);
 
     const now = new Date();
@@ -126,32 +137,46 @@ export default function AuditSystem() {
 
     const loadData = async () => {
       setIsSyncing(true);
+      let cloudEnts: Enterprise[] = [];
+      let cloudCache: Record<string, any> = {};
+
+      // Step 1: Try to fetch from Cloud (non-fatal if fails)
       try {
         const response = await fetch(GOOGLE_SHEETS_URL);
-        const cloudData = await response.json();
-        const cloudEnts = cloudData?.enterprises || [];
-        const cloudCache = cloudData?.cache || {};
+        if (response.ok) {
+          const cloudData = await response.json();
+          cloudEnts = cloudData?.enterprises || [];
+          cloudCache = cloudData?.cache || {};
+        }
+      } catch (e) {
+        console.warn('クラウドからの読み込みに失敗しました（ローカルを使用します）:', e);
+      }
 
-        const savedEntsRaw = localStorage.getItem('sol_enterprises');
-        const savedCacheRaw = localStorage.getItem('sol_cache');
-        const localEnts = savedEntsRaw ? JSON.parse(savedEntsRaw) : [];
-        const localCache = savedCacheRaw ? JSON.parse(savedCacheRaw) : {};
+      // Step 2: Try to read from LocalStorage (non-fatal if fails)
+      let localEnts: Enterprise[] = [];
+      let localCache: Record<string, any> = {};
+      try {
+        const savedEntsRaw = safeGetLocal('sol_enterprises');
+        const savedCacheRaw = safeGetLocal('sol_cache');
+        localEnts = savedEntsRaw ? JSON.parse(savedEntsRaw) : [];
+        localCache = savedCacheRaw ? JSON.parse(savedCacheRaw) : {};
+      } catch (e) {
+        console.warn('ローカルストレージの読み込みに失敗しました:', e);
+      }
 
-        const mergedEntsMap = new Map();
+      // Step 3: Smart Merge
+      try {
+        const mergedEntsMap = new Map<string, Enterprise>();
         cloudEnts.forEach((ent: Enterprise) => mergedEntsMap.set(ent.id, ent));
         localEnts.forEach((le: Enterprise) => {
-          if (!mergedEntsMap.has(le.id)) {
-            mergedEntsMap.set(le.id, le);
-            console.log('LocalStorageから復元しました:', le.name);
-          }
+          if (!mergedEntsMap.has(le.id)) mergedEntsMap.set(le.id, le);
         });
         const mergedEnts = Array.from(mergedEntsMap.values());
 
         const mergedCache = { ...cloudCache };
         Object.keys(localCache).forEach(year => {
-          if (!mergedCache[year]) {
-            mergedCache[year] = localCache[year];
-          } else {
+          if (!mergedCache[year]) mergedCache[year] = localCache[year];
+          else {
             Object.keys(localCache[year]).forEach(entId => {
               if (!mergedCache[year][entId]) mergedCache[year][entId] = localCache[year][entId];
             });
@@ -169,10 +194,9 @@ export default function AuditSystem() {
           setEnterprises(loadScheduleWithReports(currentFY, sorted));
         }
       } catch (e) {
-        console.error('Data load failed', e);
-        const savedEnts = localStorage.getItem('sol_enterprises');
-        if (savedEnts) setEnterprises(loadScheduleWithReports(currentFY, JSON.parse(savedEnts)));
+        console.error('データのマージに失敗しました:', e);
       } finally {
+        // Always complete initialization so the app renders
         setIsSyncing(false);
         setIsInitialLoadDone(true);
       }
@@ -184,12 +208,10 @@ export default function AuditSystem() {
   // Sync Effect
   useEffect(() => {
     if (!isAuthenticated || !isInitialLoadDone || enterprises.length === 0) return;
-    localStorage.setItem('sol_enterprises', JSON.stringify(enterprises));
-    localStorage.setItem('sol_cache', JSON.stringify(cacheRef.current));
+    try { localStorage.setItem('sol_enterprises', JSON.stringify(enterprises)); } catch { /* silent */ }
+    try { localStorage.setItem('sol_cache', JSON.stringify(cacheRef.current)); } catch { /* silent */ }
 
-    const timeoutId = setTimeout(() => {
-      syncToCloud();
-    }, 5000);
+    const timeoutId = setTimeout(() => syncToCloud(), 5000);
     return () => clearTimeout(timeoutId);
   }, [enterprises, isAuthenticated, isInitialLoadDone]);
 
@@ -447,7 +469,7 @@ export default function AuditSystem() {
     e.preventDefault();
     if (password === 'Solution422@') {
       setIsAuthenticated(true);
-      sessionStorage.setItem('isLoggedIn', 'true');
+      try { sessionStorage.setItem('isLoggedIn', 'true'); } catch { /* silent */ }
       setLoginError(false);
     } else setLoginError(true);
   };
