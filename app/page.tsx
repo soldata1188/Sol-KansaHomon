@@ -624,8 +624,7 @@ export default function AuditSystem() {
             <tr>
               <th style={{ width: '30px', borderRight: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)', padding: '0.4rem 0', fontSize: '0.7rem' }}>No</th>
               <th className="sticky-col" style={{ textAlign: 'left', width: '160px', borderRight: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)', padding: '0.4rem 0.75rem', fontSize: '0.8rem', background: '#f8fafc' }}>企業名</th>
-              <th style={{ width: '40px', borderRight: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)', fontSize: '0.7rem' }}>特定</th>
-              <th style={{ width: '40px', borderRight: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)', fontSize: '0.7rem' }}>実2・3</th>
+              <th style={{ width: '60px', borderRight: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)', fontSize: '0.7rem' }}>特・実23</th>
               <th style={{ width: '40px', borderRight: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)', fontSize: '0.7rem' }}>実1</th>
               <th style={{ width: '70px', borderRight: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)', fontSize: '0.7rem' }}>実1入国</th>
               {MONTHS.map(m => (
@@ -641,8 +640,7 @@ export default function AuditSystem() {
                 <tr key={ent.id} ref={isFirstMatch ? (scrollRef as React.RefObject<HTMLTableRowElement | null>) : null} style={{ borderBottom: '1px solid var(--card-border)', background: isMatching ? '#fffbeb' : 'inherit' }}>
                   <td style={{ fontSize: '0.7rem', borderRight: '1px solid var(--card-border)', color: '#94a3b8' }}>{idx + 1}</td>
                   <td className="sticky-col" onClick={() => { setTargetEnt(ent); setModalMode('edit'); }} style={{ textAlign: 'left', borderRight: '1px solid var(--card-border)', cursor: 'pointer', color: isMatching ? 'var(--status-amber)' : 'var(--primary)', fontWeight: 'bold', padding: '0.5rem 0.75rem', fontSize: '0.8rem', background: isMatching ? '#fffbeb' : 'white', position: 'sticky', left: 0, zIndex: 10 }}>{isMatching && '🎯 '}{ent.name}</td>
-                  <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.8rem' }}>{ent.countTokutei}</td>
-                  <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.8rem' }}>{ent.countJisshu23}</td>
+                  <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.8rem' }}>{ent.countTokutei + ent.countJisshu23}</td>
                   <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.8rem' }}>{ent.countJisshu1}</td>
                   <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.7rem' }}>{ent.entryDateJisshu1 || '-'}</td>
                   {ent.schedule.map((cell, sIdx) => (
@@ -669,14 +667,10 @@ export default function AuditSystem() {
                 <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>企業名</label>
                 <input type="text" placeholder="企業名" value={targetEnt.name} onChange={e => setTargetEnt({...targetEnt, name: e.target.value})} style={inputStyle} />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>特定</label>
-                  <input type="number" placeholder="0" value={targetEnt.countTokutei} onChange={e => setTargetEnt({...targetEnt, countTokutei: parseInt(e.target.value)||0})} style={inputStyle} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>実2・3</label>
-                  <input type="number" placeholder="0" value={targetEnt.countJisshu23} onChange={e => setTargetEnt({...targetEnt, countJisshu23: parseInt(e.target.value)||0})} style={inputStyle} />
+                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>特・実23</label>
+                  <input type="number" placeholder="0" value={targetEnt.countTokutei + targetEnt.countJisshu23} onChange={e => setTargetEnt({...targetEnt, countTokutei: parseInt(e.target.value)||0, countJisshu23: 0})} style={inputStyle} />
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>実1</label>
