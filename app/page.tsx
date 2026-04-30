@@ -548,7 +548,7 @@ export default function AuditSystem() {
 
   const filteredEnterprises = enterprises.filter(ent => {
     const matchesSearch = ent.name.toLowerCase().includes(searchTerm.toLowerCase());
-    if (filterMode === 'all') return matchesSearch;
+    if (viewMode === 'training' || filterMode === 'all') return matchesSearch;
     const currentMonthData = ent.schedule.find(c => c.month === currentMonth);
     if (filterMode === 'audit') return matchesSearch && currentMonthData?.type === 'audit';
     if (filterMode === 'visit') return matchesSearch && currentMonthData?.type === 'visit';
@@ -675,7 +675,7 @@ export default function AuditSystem() {
             <span style={{ position: 'absolute', left: '0.5rem', top: '50%', transform: 'translateY(-50%)', fontSize: '0.8rem' }}>🔍</span>
           </div>
           <div style={{ display: 'flex', gap: '0.3rem' }}>
-            {[{id:'all',label:'すべて'},{id:'audit',label:'監査'},{id:'visit',label:'訪問'},{id:'pending',label:'未完'}].map(f => (
+            {viewMode === 'schedule' && [{id:'all',label:'すべて'},{id:'audit',label:'監査'},{id:'visit',label:'訪問'},{id:'pending',label:'未完'}].map(f => (
               <button key={f.id} onClick={() => setFilterMode(f.id as 'all' | 'audit' | 'visit' | 'pending')} style={{ padding: '0.3rem 0.6rem', borderRadius: '3px', fontSize: '0.7rem', fontWeight: '600', border: '1px solid', cursor: 'pointer', borderColor: filterMode === f.id ? 'var(--primary)' : 'var(--card-border)', background: filterMode === f.id ? 'var(--primary)' : 'white', color: filterMode === f.id ? 'white' : 'var(--text-main)' }}>{f.label}</button>
             ))}
           </div>
