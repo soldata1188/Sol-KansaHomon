@@ -808,7 +808,7 @@ export default function AuditSystem() {
         </div>
 
         {/* Search & Filter Bar */}
-        <div style={{ background: 'white', padding: '0.6rem', border: '1px solid var(--card-border)', borderRadius: '4px', display: 'flex', flexWrap: 'wrap', gap: '0.8rem', alignItems: 'center', marginBottom: '0.6rem' }}>
+        <div className="filter-bar" style={{ background: 'white', padding: '0.6rem', border: '1px solid var(--card-border)', borderRadius: '4px', display: 'flex', flexWrap: 'wrap', gap: '0.8rem', alignItems: 'center', marginBottom: '0.6rem' }}>
           <div style={{ position: 'relative', flex: '1', minWidth: '200px' }}>
             <input type="text" placeholder="企業名で検索..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} style={{ width: '100%', padding: '0.4rem 0.5rem 0.4rem 1.8rem', borderRadius: '4px', border: '1px solid var(--card-border)', fontSize: '0.8rem' }} />
             <span style={{ position: 'absolute', left: '0.5rem', top: '50%', transform: 'translateY(-50%)', fontSize: '0.8rem' }}>🔍</span>
@@ -822,13 +822,13 @@ export default function AuditSystem() {
         </div>
 
         {/* Navigation Bar */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.25rem 0.4rem', background: 'white', border: '1px solid var(--card-border)', borderRadius: '4px' }}>
+        <div className="fiscal-nav" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.25rem 0.4rem', background: 'white', border: '1px solid var(--card-border)', borderRadius: '4px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', background: '#f1f3f4', padding: '2px', borderRadius: '4px' }}>
             <button onClick={() => changeFiscalYear(-1)} disabled={fiscalYear <= 2025} style={{ padding: '4px 8px', border: 'none', borderRadius: '3px', background: fiscalYear <= 2025 ? 'transparent' : 'white', cursor: fiscalYear <= 2025 ? 'not-allowed' : 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}>◀ 前年</button>
             <div style={{ padding: '0 0.75rem', fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--primary)' }}>{fiscalYear}年度</div>
             <button onClick={() => changeFiscalYear(1)} style={{ padding: '4px 8px', border: 'none', borderRadius: '3px', background: 'white', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}>翌年 ▶</button>
           </div>
-          <div style={{ display: 'flex', gap: '0.4rem' }}>
+          <div className="toolbar-actions" style={{ display: 'flex', gap: '0.4rem' }}>
             <button onClick={handleAutoFillAudits} style={{ padding: '0.3rem 0.6rem', border: '1px solid #fde047', borderRadius: '3px', background: '#fefce8', color: '#a16207', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
               <span>⚙️</span> 監査を自動補完 (3ヶ月)
             </button>
@@ -839,7 +839,7 @@ export default function AuditSystem() {
         </div>
 
         {/* View Toggle */}
-        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.6rem' }}>
+        <div className="view-toggle" style={{ display: 'flex', gap: '0.5rem', marginTop: '0.6rem' }}>
           <button onClick={() => setViewMode('schedule')} style={{ flex: 1, padding: '0.5rem', border: '1px solid var(--card-border)', background: viewMode === 'schedule' ? 'var(--primary)' : 'white', color: viewMode === 'schedule' ? 'white' : 'var(--text-main)', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}>📅 スケジュール管理</button>
           <button onClick={() => setViewMode('training')} style={{ flex: 1, padding: '0.5rem', border: '1px solid var(--card-border)', background: viewMode === 'training' ? 'var(--primary)' : 'white', color: viewMode === 'training' ? 'white' : 'var(--text-main)', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}>🎓 受講・責任者管理 (3年更新)</button>
         </div>

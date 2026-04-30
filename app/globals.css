@@ -143,6 +143,26 @@ h1, h2, h3, h4, h5, h6 {
     padding: 2px 0;
   }
 
+  /* Hide toolbar action buttons on mobile */
+  .toolbar-actions {
+    display: none !important;
+  }
+
+  /* Hide fiscal year navigation on mobile */
+  .fiscal-nav {
+    display: none !important;
+  }
+
+  /* Hide desktop table view toggle on mobile */
+  .view-toggle {
+    display: none !important;
+  }
+
+  /* Hide filter bar on mobile */
+  .filter-bar {
+    display: none !important;
+  }
+
   .card-modal {
     width: 95% !important;
     max-width: none !important;
