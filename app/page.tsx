@@ -128,6 +128,8 @@ export default function AnnualScheduleMatrix() {
 
   const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwoaB1_RZ0nheTgUNptjVz-Cv6ysusph7C_LKl3HYC2__3EygtnIrdzxAXiatXCnI0jwg/exec';
   const [isSyncing, setIsSyncing] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterMode, setFilterMode] = useState<'all' | 'audit' | 'visit' | 'pending'>('all');
 
   useEffect(() => {
     const auth = sessionStorage.getItem('isLoggedIn');
@@ -512,6 +514,17 @@ export default function AnnualScheduleMatrix() {
 
   const inputStyle = { width: '100%', padding: '0.6rem', border: '1px solid var(--card-border)', borderRadius: '4px', boxSizing: 'border-box' as const };
 
+  // --- Filtering Logic ---
+  const filteredEnterprises = enterprises.filter(ent => {
+    const matchesSearch = ent.name.toLowerCase().includes(searchTerm.toLowerCase());
+    if (filterMode === 'all') return matchesSearch;
+    const currentMonthData = ent.schedule.find(c => c.month === currentMonth);
+    if (filterMode === 'audit') return matchesSearch && currentMonthData?.type === 'audit';
+    if (filterMode === 'visit') return matchesSearch && currentMonthData?.type === 'visit';
+    if (filterMode === 'pending') return matchesSearch && currentMonthData?.type !== 'none' && currentMonthData?.status === 'pending';
+    return matchesSearch;
+  });
+
   if (!isAuthenticated) {
     return (
       <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#f0f2f5' }}>
@@ -573,6 +586,67 @@ export default function AnnualScheduleMatrix() {
             >
               ＋ 追加
             </button>
+          </div>
+        </div>
+
+        {/* --- Smart Search & Filter Bar --- */}
+        <div style={{ 
+          background: 'white', 
+          padding: '0.75rem', 
+          border: '1px solid var(--card-border)',
+          borderRadius: '4px',
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '1rem',
+          alignItems: 'center',
+          marginBottom: '0.6rem'
+        }}>
+          <div style={{ position: 'relative', flex: '1', minWidth: '200px' }}>
+            <input 
+              type="text" 
+              placeholder="企業名で検索..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ 
+                width: '100%', 
+                padding: '0.4rem 0.5rem 0.4rem 1.8rem', 
+                borderRadius: '4px', 
+                border: '1px solid var(--card-border)',
+                fontSize: '0.8rem'
+              }}
+            />
+            <span style={{ position: 'absolute', left: '0.5rem', top: '50%', transform: 'translateY(-50%)', fontSize: '0.8rem' }}>🔍</span>
+          </div>
+
+          <div style={{ display: 'flex', gap: '0.3rem' }}>
+            {[
+              { id: 'all', label: 'すべて' },
+              { id: 'audit', label: '監査' },
+              { id: 'visit', label: '訪問' },
+              { id: 'pending', label: '未完' }
+            ].map(f => (
+              <button
+                key={f.id}
+                onClick={() => setFilterMode(f.id as any)}
+                style={{
+                  padding: '0.3rem 0.6rem',
+                  borderRadius: '3px',
+                  fontSize: '0.7rem',
+                  fontWeight: '600',
+                  border: '1px solid',
+                  cursor: 'pointer',
+                  borderColor: filterMode === f.id ? 'var(--primary)' : 'var(--card-border)',
+                  background: filterMode === f.id ? 'var(--primary)' : 'white',
+                  color: filterMode === f.id ? 'white' : 'var(--text-main)'
+                }}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ marginLeft: 'auto', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+            表示: <strong>{filteredEnterprises.length}</strong> / {enterprises.length} 社
           </div>
         </div>
 
