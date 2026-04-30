@@ -196,18 +196,29 @@ export default function AuditSystem() {
   const syncToCloud = async () => {
     if (enterprises.length === 0) return;
     setIsSyncing(true);
+    console.log('🔄 同期を開始します...', { count: enterprises.length });
+
     try {
+      // Thêm timestamp để kiểm soát phiên bản gửi
+      const payload = {
+        timestamp: new Date().toISOString(),
+        enterprises,
+        cache: cacheRef.current
+      };
+
       await fetch(GOOGLE_SHEETS_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ enterprises, cache: cacheRef.current })
+        body: JSON.stringify(payload)
       });
-      console.log('クラウド同期完了');
+      
+      console.log('✅ 送信完了 (GAS側で処理中)');
     } catch (e) {
-      console.error('同期エラー', e);
+      console.error('❌ 同期エラー:', e);
     } finally {
-      setTimeout(() => setIsSyncing(false), 1000);
+      // Giả lập thời gian chờ để GAS kịp xử lý
+      setTimeout(() => setIsSyncing(false), 1500);
     }
   };
 
