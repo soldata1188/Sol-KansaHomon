@@ -182,7 +182,9 @@ export function useAuditSystem() {
           if (!a.entryDateJisshu1 && !b.entryDateJisshu1) return a.name.localeCompare(b.name, 'ja');
           if (!a.entryDateJisshu1) return 1;
           if (!b.entryDateJisshu1) return -1;
-          return b.entryDateJisshu1.localeCompare(a.entryDateJisshu1);
+          const dateCompare = b.entryDateJisshu1.localeCompare(a.entryDateJisshu1);
+          if (dateCompare !== 0) return dateCompare;
+          return a.name.localeCompare(b.name, 'ja');
         });
         setEnterprises(loadScheduleWithReports(currentFY, sorted));
       }
@@ -240,7 +242,9 @@ export function useAuditSystem() {
         if (!a.entryDateJisshu1 && !b.entryDateJisshu1) return a.name.localeCompare(b.name, 'ja');
         if (!a.entryDateJisshu1) return 1;
         if (!b.entryDateJisshu1) return -1;
-        return b.entryDateJisshu1.localeCompare(a.entryDateJisshu1);
+        const dateCompare = b.entryDateJisshu1.localeCompare(a.entryDateJisshu1);
+        if (dateCompare !== 0) return dateCompare;
+        return a.name.localeCompare(b.name, 'ja');
       });
     });
     setModalMode('none');
