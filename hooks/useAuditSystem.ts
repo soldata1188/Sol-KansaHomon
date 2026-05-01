@@ -346,16 +346,31 @@ export function useAuditSystem() {
       cmp = a.countJisshu1 - b.countJisshu1;
     } else if (sortColumn === 'entryDateJisshu1') {
       if (!a.entryDateJisshu1 && !b.entryDateJisshu1) cmp = 0;
-      else if (!a.entryDateJisshu1) cmp = 1;
-      else if (!b.entryDateJisshu1) cmp = -1;
+      else if (!a.entryDateJisshu1) return 1; // Always force empty dates to bottom
+      else if (!b.entryDateJisshu1) return -1; // Always force empty dates to bottom
       else cmp = a.entryDateJisshu1.localeCompare(b.entryDateJisshu1);
     }
     
-    if (cmp === 0) {
-      cmp = a.name.localeCompare(b.name, 'ja');
+    // Apply direction to primary sort
+    let finalCmp = sortDirection === 'asc' ? cmp : -cmp;
+    
+    // Absolute Tie-breakers (always applied in a fixed direction regardless of sortDirection)
+    if (finalCmp === 0) {
+      // 1st tie-breaker: entryDate (Newest on top, empties at bottom)
+      const aDate = a.entryDateJisshu1 || '';
+      const bDate = b.entryDateJisshu1 || '';
+      if (!aDate && !bDate) finalCmp = 0;
+      else if (!aDate) finalCmp = 1;
+      else if (!bDate) finalCmp = -1;
+      else finalCmp = bDate.localeCompare(aDate);
+      
+      // 2nd tie-breaker: name (A-Z)
+      if (finalCmp === 0) {
+        finalCmp = a.name.localeCompare(b.name, 'ja');
+      }
     }
     
-    return sortDirection === 'asc' ? cmp : -cmp;
+    return finalCmp;
   });
 
   const handleSort = (column: SortColumn) => {
@@ -363,7 +378,8 @@ export function useAuditSystem() {
       setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
     } else {
       setSortColumn(column);
-      setSortDirection('desc');
+      // 'name' and 'acceptTypes' default to A-Z (asc). Numbers and dates default to highest/newest (desc).
+      setSortDirection(column === 'name' || column === 'acceptTypes' ? 'asc' : 'desc');
     }
   };
 
