@@ -232,11 +232,11 @@ export async function POST(request: NextRequest) {
       if (repErr) throw repErr;
     }
 
-    console.log(`[API/sync POST] Done — ${entRows.length} enterprises, ${cellRows.length} cells, ${reportRows.length} reports`);
+    console.log(`[API/sync POST] Done — ${entRows.length} enterprises, ${activeCellRows.length} cells, ${reportRows.length} reports`);
 
     return NextResponse.json({
       success: true,
-      message: `同期完了: ${entRows.length}社 / ${cellRows.length}件のスケジュール / ${reportRows.length}件のレポート`
+      message: `同期完了: ${entRows.length}社 / ${activeCellRows.length}件のスケジュール / ${reportRows.length}件のレポート`
     });
   } catch (error) {
     console.error('[API/sync POST] Error:', error);
