@@ -141,46 +141,35 @@ export function useAuditSystem() {
 
     const loadData = async () => {
       setIsSyncing(true);
-      let cloudEnts: Enterprise[] = [];
-      let cloudCache: Record<string, Record<string, ScheduleCell[]>> = {};
+      let isCloudSuccess = false;
+      let finalEnts: Enterprise[] = [];
+      let finalCache: Record<string, Record<string, ScheduleCell[]>> = {};
 
       try {
         const response = await fetch(SYNC_API_URL, { cache: 'no-store' });
         if (response.ok) {
           const cloudData = await response.json();
-          cloudEnts = cloudData?.enterprises || [];
-          cloudCache = cloudData?.cache || {};
+          finalEnts = cloudData?.enterprises || [];
+          finalCache = cloudData?.cache || {};
+          isCloudSuccess = true;
+          
+          try { localStorage.setItem('sol_enterprises', JSON.stringify(finalEnts)); } catch { /* silent */ }
+          try { localStorage.setItem('sol_cache', JSON.stringify(finalCache)); } catch { /* silent */ }
         }
       } catch (e) { console.warn('Cloud fetch failed', e); }
 
-      let localEnts: Enterprise[] = [];
-      let localCache: Record<string, Record<string, ScheduleCell[]>> = {};
-      try {
-        const savedEntsRaw = safeGetLocal('sol_enterprises');
-        const savedCacheRaw = safeGetLocal('sol_cache');
-        localEnts = savedEntsRaw ? JSON.parse(savedEntsRaw) : [];
-        localCache = savedCacheRaw ? JSON.parse(savedCacheRaw) : {};
-      } catch (e) { console.warn('Local storage fetch failed', e); }
+      if (!isCloudSuccess) {
+        try {
+          const savedEntsRaw = safeGetLocal('sol_enterprises');
+          const savedCacheRaw = safeGetLocal('sol_cache');
+          finalEnts = savedEntsRaw ? JSON.parse(savedEntsRaw) : [];
+          finalCache = savedCacheRaw ? JSON.parse(savedCacheRaw) : {};
+        } catch (e) { console.warn('Local storage fetch failed', e); }
+      }
 
-      // Merge & Sort
-      const mergedEntsMap = new Map<string, Enterprise>();
-      cloudEnts.forEach((ent: Enterprise) => mergedEntsMap.set(ent.id, ent));
-      localEnts.forEach((le: Enterprise) => { if (!mergedEntsMap.has(le.id)) mergedEntsMap.set(le.id, le); });
-      const mergedEnts = Array.from(mergedEntsMap.values());
-
-      const mergedCache = { ...cloudCache };
-      Object.keys(localCache).forEach(year => {
-        if (!mergedCache[year]) mergedCache[year] = localCache[year];
-        else {
-          Object.keys(localCache[year]).forEach(entId => {
-            if (!mergedCache[year][entId]) mergedCache[year][entId] = localCache[year][entId];
-          });
-        }
-      });
-
-      if (mergedEnts.length > 0) {
-        cacheRef.current = mergedCache;
-        const sorted = mergedEnts.sort((a, b) => {
+      if (finalEnts.length > 0 || isCloudSuccess) {
+        cacheRef.current = finalCache;
+        const sorted = finalEnts.sort((a, b) => {
           if (!a.entryDateJisshu1 && !b.entryDateJisshu1) return a.name.localeCompare(b.name, 'ja');
           if (!a.entryDateJisshu1) return 1;
           if (!b.entryDateJisshu1) return -1;
