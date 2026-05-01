@@ -73,7 +73,7 @@ export function useAuditSystem() {
     });
   }, []);
 
-  const syncToCloud = useCallback(async (overrideEnts?: Enterprise[]) => {
+  const syncToCloud = useCallback(async (overrideEnts?: Enterprise[], removedCells?: { enterprise_id: string; fiscal_year: number; month: number }[]) => {
     const data = overrideEnts || enterprises;
     if (data.length === 0) return;
     setIsSyncing(true);
@@ -104,11 +104,9 @@ export function useAuditSystem() {
         timestamp: new Date().toISOString(),
         enterprises: data,
         cache: cacheRef.current,
-        reports
+        reports,
+        removedCells: removedCells || []
       };
-
-      console.log('[syncToCloud] Sending:', data.length, 'enterprises,', 
-        Object.keys(cacheRef.current).map(y => `FY${y}:${Object.keys(cacheRef.current[Number(y)] || {}).length}ents`).join(', '));
 
       const response = await fetch(SYNC_API_URL, {
         method: 'POST',
@@ -345,13 +343,14 @@ export function useAuditSystem() {
 
   const handleRemoveSchedule = () => {
     if (!selectedCell || !confirm('解除しますか？')) return;
+    const cellToRemove = { enterprise_id: selectedCell.entId, fiscal_year: fiscalYear, month: selectedCell.month };
     setEnterprises(prev => {
       const updated = prev.map(ent => {
         if (ent.id !== selectedCell.entId) return ent;
         return { ...ent, schedule: ent.schedule.map(c => c.month === selectedCell.month ? { ...c, type: 'none' as TaskType, status: 'pending' as StatusType, report: undefined } : c) };
       });
       saveCurrentToCache(fiscalYear, updated);
-      setTimeout(() => syncToCloud(updated), 0);
+      setTimeout(() => syncToCloud(updated, [cellToRemove]), 0);
       return updated;
     });
     setModalMode('none');

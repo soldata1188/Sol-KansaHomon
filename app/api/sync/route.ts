@@ -114,6 +114,7 @@ export async function POST(request: NextRequest) {
     const body: {
       enterprises: Enterprise[];
       cache: Record<number, Record<string, ScheduleCell[]>>;
+      removedCells?: { enterprise_id: string; fiscal_year: number; month: number }[];
     } = await request.json();
 
     const { enterprises, cache } = body;
@@ -152,7 +153,7 @@ export async function POST(request: NextRequest) {
       status: string;
     }[] = [];
 
-    const removedCells: { enterprise_id: string; fiscal_year: number; month: number }[] = [];
+    const removedCells: { enterprise_id: string; fiscal_year: number; month: number }[] = body.removedCells || [];
 
     Object.entries(cache).forEach(([yearStr, yearObj]) => {
       const fiscal_year = Number(yearStr);
@@ -166,8 +167,6 @@ export async function POST(request: NextRequest) {
               type:   cell.type,
               status: cell.status,
             });
-          } else {
-            removedCells.push({ enterprise_id: entId, fiscal_year, month: cell.month });
           }
         });
       });
@@ -185,7 +184,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Delete cells that have been reset to 'none'
+    // Delete only explicitly removed cells
     for (const rc of removedCells) {
       await supabase
         .from('schedule_cells')
