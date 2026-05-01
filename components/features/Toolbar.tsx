@@ -40,9 +40,14 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         <div style={{ marginLeft: 'auto', fontSize: '0.75rem', color: 'var(--text-muted)' }}>表示: <strong>{filteredCount}</strong> / {totalCount} 社</div>
       </div>
 
-      {/* Navigation Bar */}
-      <div className="fiscal-nav" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', background: 'var(--card-bg)', padding: '0.2rem', borderRadius: 'var(--radius)', border: '1px solid var(--card-border)' }}>
+      {/* Navigation & View Toggle */}
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', borderBottom: '1px solid var(--card-border)', marginBottom: '0.8rem' }}>
+        <div className="view-toggle" style={{ display: 'flex', gap: '1.5rem' }}>
+          <button onClick={() => setViewMode('schedule')} style={{ padding: '0.5rem 0', background: 'transparent', border: 'none', color: viewMode === 'schedule' ? 'var(--primary)' : 'var(--text-main)', fontWeight: viewMode === 'schedule' ? '600' : '500', cursor: 'pointer', borderBottom: viewMode === 'schedule' ? '2px solid var(--primary)' : '2px solid transparent', marginBottom: '-1px' }}>📅 スケジュール管理</button>
+          <button onClick={() => setViewMode('training')} style={{ padding: '0.5rem 0', background: 'transparent', border: 'none', color: viewMode === 'training' ? 'var(--primary)' : 'var(--text-main)', fontWeight: viewMode === 'training' ? '600' : '500', cursor: 'pointer', borderBottom: viewMode === 'training' ? '2px solid var(--primary)' : '2px solid transparent', marginBottom: '-1px' }}>🎓 受講・責任者管理</button>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', background: 'var(--card-bg)', padding: '0.2rem', borderRadius: 'var(--radius)', border: '1px solid var(--card-border)', marginBottom: '0.4rem' }}>
           {[2025, 2026, 2027, 2028, 2029, 2030].map(year => (
             <button 
               key={year} 
@@ -63,12 +68,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             </button>
           ))}
         </div>
-      </div>
-
-      {/* View Toggle */}
-      <div className="view-toggle" style={{ display: 'flex', gap: '1.5rem', borderBottom: '1px solid var(--card-border)', marginBottom: '0.8rem' }}>
-        <button onClick={() => setViewMode('schedule')} style={{ padding: '0.5rem 0', background: 'transparent', border: 'none', color: viewMode === 'schedule' ? 'var(--primary)' : 'var(--text-muted)', fontWeight: viewMode === 'schedule' ? '500' : '400', cursor: 'pointer', borderBottom: viewMode === 'schedule' ? '2px solid var(--primary)' : '2px solid transparent' }}>📅 スケジュール管理</button>
-        <button onClick={() => setViewMode('training')} style={{ padding: '0.5rem 0', background: 'transparent', border: 'none', color: viewMode === 'training' ? 'var(--primary)' : 'var(--text-muted)', fontWeight: viewMode === 'training' ? '500' : '400', cursor: 'pointer', borderBottom: viewMode === 'training' ? '2px solid var(--primary)' : '2px solid transparent' }}>🎓 受講・責任者管理</button>
       </div>
     </>
   );
