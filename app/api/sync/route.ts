@@ -1,43 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { Enterprise, ScheduleCell, Report } from '@/lib/types';
+
+export const dynamic = 'force-dynamic';
 
 // ─────────────────────────────────────────────
-//  Types (mirror page.tsx — keep in sync)
+//  Logic helpers
 // ─────────────────────────────────────────────
-interface Report {
-  staff: string;
-  date: string;
-  interviewee: string;
-  checkSalary?: string;
-  checkLog?: string;
-  remarks?: string;
-  vStaff?: string;
-  vDate?: string;
-  vInterviewee?: string;
-}
 
-interface ScheduleCell {
-  month: number;
-  type: 'audit' | 'visit' | 'none';
-  status: 'pending' | 'completed';
-  report?: Report;
-}
-
-interface Enterprise {
-  id: string;
-  name: string;
-  countTokutei: number;
-  countJisshu23: number;
-  countJisshu1: number;
-  entryDateJisshu1: string;
-  respName?: string;
-  respDate?: string;
-  instrName?: string;
-  instrDate?: string;
-  lifeName?: string;
-  lifeDate?: string;
-  schedule: ScheduleCell[];
-}
 
 // ─────────────────────────────────────────────
 //  GET — Load all data from Supabase

@@ -1,0 +1,2183 @@
+[
+  {
+    "id": "ENT1777505033172",
+    "name": "ＡＳＩＮＧ",
+    "countTokutei": 3,
+    "countJisshu23": 6,
+    "countJisshu1": 3,
+    "entryDateJisshu1": "2026-04-21",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "audit",
+        "status": "completed",
+        "report": {
+          "staff": "海渡",
+          "date": "2026-04-07",
+          "interviewee": "",
+          "checkSalary": "none",
+          "checkLog": "none",
+          "remarks": "",
+          "vStaff": "",
+          "vDate": "",
+          "vInterviewee": ""
+        }
+      },
+      {
+        "month": 5,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "visit",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT_TEST_001",
+    "name": "GLT",
+    "countTokutei": 3,
+    "countJisshu23": 2,
+    "countJisshu1": 1,
+    "entryDateJisshu1": "2026-03-10",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "audit",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777507373952",
+    "name": "ケナフエンジニア",
+    "countTokutei": 0,
+    "countJisshu23": 3,
+    "countJisshu1": 3,
+    "entryDateJisshu1": "2026-03-10",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "audit",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777507470487",
+    "name": "タケミ・コーポレーション",
+    "countTokutei": 4,
+    "countJisshu23": 4,
+    "countJisshu1": 3,
+    "entryDateJisshu1": "2026-01-26",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "visit",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777508054561",
+    "name": "テンスタイル",
+    "countTokutei": 0,
+    "countJisshu23": 0,
+    "countJisshu1": 2,
+    "entryDateJisshu1": "2026-01-26",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "visit",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777507228237",
+    "name": "オービービー",
+    "countTokutei": 0,
+    "countJisshu23": 10,
+    "countJisshu1": 5,
+    "entryDateJisshu1": "2025-12-15",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "audit",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777512741814",
+    "name": "丸田工業",
+    "countTokutei": 0,
+    "countJisshu23": 1,
+    "countJisshu1": 2,
+    "entryDateJisshu1": "2025-12-15",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "audit",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777506220482",
+    "name": "SHINKO",
+    "countTokutei": 6,
+    "countJisshu23": 1,
+    "countJisshu1": 3,
+    "entryDateJisshu1": "2025-10-16",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "visit",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777506289141",
+    "name": "たた市",
+    "countTokutei": 0,
+    "countJisshu23": 0,
+    "countJisshu1": 1,
+    "entryDateJisshu1": "2025-10-16",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "visit",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777508386015",
+    "name": "三栄",
+    "countTokutei": 0,
+    "countJisshu23": 0,
+    "countJisshu1": 3,
+    "entryDateJisshu1": "2025-10-03",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "visit",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777506242603",
+    "name": "TEF",
+    "countTokutei": 0,
+    "countJisshu23": 0,
+    "countJisshu1": 1,
+    "entryDateJisshu1": "2025-08-18",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "visit",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777507175229",
+    "name": "ふじえ",
+    "countTokutei": 2,
+    "countJisshu23": 4,
+    "countJisshu1": 6,
+    "entryDateJisshu1": "2025-08-04",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "visit",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777508331892",
+    "name": "ヤマエ",
+    "countTokutei": 1,
+    "countJisshu23": 0,
+    "countJisshu1": 3,
+    "entryDateJisshu1": "2025-08-04",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "visit",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777508033564",
+    "name": "ダイテツ",
+    "countTokutei": 0,
+    "countJisshu23": 0,
+    "countJisshu1": 1,
+    "entryDateJisshu1": "2025-06-26",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "audit",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777511519793",
+    "name": "丸山組",
+    "countTokutei": 0,
+    "countJisshu23": 2,
+    "countJisshu1": 0,
+    "entryDateJisshu1": "2024-08-21",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "visit",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "audit",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "visit",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777505305929",
+    "name": "MIYABI",
+    "countTokutei": 0,
+    "countJisshu23": 3,
+    "countJisshu1": 0,
+    "entryDateJisshu1": "",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "none",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777507200320",
+    "name": "アース",
+    "countTokutei": 3,
+    "countJisshu23": 4,
+    "countJisshu1": 0,
+    "entryDateJisshu1": "",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "none",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777507210455",
+    "name": "ウラタ",
+    "countTokutei": 2,
+    "countJisshu23": 0,
+    "countJisshu1": 0,
+    "entryDateJisshu1": "",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "none",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777507328744",
+    "name": "カワハラ",
+    "countTokutei": 1,
+    "countJisshu23": 2,
+    "countJisshu1": 0,
+    "entryDateJisshu1": "",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "none",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777507346637",
+    "name": "グリーンヒルズ",
+    "countTokutei": 2,
+    "countJisshu23": 0,
+    "countJisshu1": 0,
+    "entryDateJisshu1": "",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "none",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777507387869",
+    "name": "サンテック",
+    "countTokutei": 1,
+    "countJisshu23": 0,
+    "countJisshu1": 0,
+    "entryDateJisshu1": "",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "none",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777507407794",
+    "name": "スペース・グリーン",
+    "countTokutei": 4,
+    "countJisshu23": 8,
+    "countJisshu1": 0,
+    "entryDateJisshu1": "",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "none",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777507433498",
+    "name": "タクマテック",
+    "countTokutei": 0,
+    "countJisshu23": 1,
+    "countJisshu1": 0,
+    "entryDateJisshu1": "",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "none",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777508230785",
+    "name": "トラストグリーン",
+    "countTokutei": 1,
+    "countJisshu23": 3,
+    "countJisshu1": 0,
+    "entryDateJisshu1": "",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "none",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777508241832",
+    "name": "ビルドジャパン",
+    "countTokutei": 1,
+    "countJisshu23": 0,
+    "countJisshu1": 0,
+    "entryDateJisshu1": "",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "none",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777508254895",
+    "name": "ファースト・トップ",
+    "countTokutei": 3,
+    "countJisshu23": 0,
+    "countJisshu1": 0,
+    "entryDateJisshu1": "",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "none",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777508309381",
+    "name": "プライムエコ",
+    "countTokutei": 9,
+    "countJisshu23": 13,
+    "countJisshu1": 0,
+    "entryDateJisshu1": "",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "none",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777508342540",
+    "name": "ヤマグチ鉄建",
+    "countTokutei": 0,
+    "countJisshu23": 3,
+    "countJisshu1": 0,
+    "entryDateJisshu1": "",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "none",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777508352553",
+    "name": "リビングコダマ",
+    "countTokutei": 1,
+    "countJisshu23": 2,
+    "countJisshu1": 0,
+    "entryDateJisshu1": "",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "none",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777508368068",
+    "name": "レクス",
+    "countTokutei": 0,
+    "countJisshu23": 3,
+    "countJisshu1": 0,
+    "entryDateJisshu1": "",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "none",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "id": "ENT1777514333054",
+    "name": "兼子建材店",
+    "countTokutei": 2,
+    "countJisshu23": 1,
+    "countJisshu1": 0,
+    "entryDateJisshu1": "",
+    "schedule": [
+      {
+        "month": 4,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 5,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 6,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 7,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 8,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 9,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 10,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 11,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 12,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 1,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 2,
+        "type": "none",
+        "status": "pending"
+      },
+      {
+        "month": 3,
+        "type": "none",
+        "status": "pending"
+      }
+    ]
+  }
+]
