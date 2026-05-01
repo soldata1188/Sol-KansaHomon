@@ -229,7 +229,7 @@ export function useAuditSystem() {
       } else {
         next = prev.map(e => (e.id === targetEnt.id ? { ...e, ...targetEnt, name: trimmed, schedule: e.schedule } : e));
       }
-      return next.sort((a, b) => {
+      const sorted = next.sort((a, b) => {
         if (!a.entryDateJisshu1 && !b.entryDateJisshu1) return a.name.localeCompare(b.name, 'ja');
         if (!a.entryDateJisshu1) return 1;
         if (!b.entryDateJisshu1) return -1;
@@ -237,6 +237,8 @@ export function useAuditSystem() {
         if (dateCompare !== 0) return dateCompare;
         return a.name.localeCompare(b.name, 'ja');
       });
+      setTimeout(() => syncToCloud(sorted), 0);
+      return sorted;
     });
     setModalMode('none');
   };
@@ -250,6 +252,7 @@ export function useAuditSystem() {
     setEnterprises(updatedEnts);
     setModalMode('none');
     fetch('/api/delete-enterprise', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: ent.id }) }).catch(() => {});
+    setTimeout(() => syncToCloud(updatedEnts), 0);
   };
 
   const handleSaveReport = () => {
@@ -263,7 +266,7 @@ export function useAuditSystem() {
         return { ...ent, schedule: ent.schedule.map(c => c.month === selectedCell.month ? { ...c, status: newStatus, report: tempReport } : c) };
       });
       saveCurrentToCache(fiscalYear, updated);
-      setTimeout(() => syncToCloud(), 500);
+      setTimeout(() => syncToCloud(updated), 0);
       return updated;
     });
     setModalMode('none');
@@ -277,6 +280,7 @@ export function useAuditSystem() {
         return { ...ent, schedule: ent.schedule.map(c => c.month === selectedCell.month ? { ...c, type: newType, status: 'pending' as StatusType, report: undefined } : c) };
       });
       saveCurrentToCache(fiscalYear, updated);
+      setTimeout(() => syncToCloud(updated), 0);
       return updated;
     });
     setModalMode('none');
@@ -290,6 +294,7 @@ export function useAuditSystem() {
         return { ...ent, schedule: ent.schedule.map(c => c.month === selectedCell.month ? { ...c, type: 'none' as TaskType, status: 'pending' as StatusType, report: undefined } : c) };
       });
       saveCurrentToCache(fiscalYear, updated);
+      setTimeout(() => syncToCloud(updated), 0);
       return updated;
     });
     setModalMode('none');
