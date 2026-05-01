@@ -25,17 +25,14 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
     const isToday = cell.month === realMonth && fiscalYear === realFiscalYear;
     if (cell.type === 'none') {
       return (
-        <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+        <div 
+          onClick={() => openChecklist(ent, cell.month, cell.type)}
+          style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', cursor: 'pointer' }}
+        >
           {isToday && (
-            <span style={{ 
-              position: 'absolute', top: '3px', right: '3px', width: '5px', height: '5px', 
-              borderRadius: '50%', background: 'var(--status-red)', zIndex: 2
-            }} />
+            <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--status-red)', flexShrink: 0 }} />
           )}
-          <button
-            onClick={() => openChecklist(ent, cell.month, cell.type)}
-            style={{ width: '100%', height: '100%', border: 'none', background: 'transparent', cursor: 'pointer', color: '#E2E8F0', fontSize: '0.7rem' }}
-          >＋</button>
+          <span style={{ color: '#E2E8F0', fontSize: '0.7rem' }}>＋</span>
         </div>
       );
     }
@@ -60,17 +57,13 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
         style={{ 
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
           cursor: 'pointer', padding: '4px 2px', height: '100%',
-          background: bgColor,
-          position: 'relative'
+          background: bgColor
         }}
       >
-        {isToday && (
-          <span style={{ 
-            position: 'absolute', top: '3px', right: '3px', width: '5px', height: '5px', 
-            borderRadius: '50%', background: 'var(--status-red)', zIndex: 2
-          }} />
-        )}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          {isToday && (
+            <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--status-red)', flexShrink: 0 }} />
+          )}
           <span style={{ fontSize: '0.7rem', fontWeight: '500', color: labelColor, letterSpacing: '0.02em' }}>
             {isAudit ? '監' : '訪'}
           </span>

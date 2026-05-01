@@ -57,13 +57,10 @@ export const MobileView: React.FC<MobileViewProps> = ({
           fontSize: '0.65rem'
         }}
       >
-        {isToday && (
-          <span style={{ 
-            position: 'absolute', top: '3px', right: '3px', width: '5px', height: '5px', 
-            borderRadius: '50%', background: 'var(--status-red)', zIndex: 2
-          }} />
-        )}
-        <span style={{ fontSize: '0.55rem', opacity: 0.5, lineHeight: 1 }}>{cell.month}月</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
+          {isToday && <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--status-red)', flexShrink: 0 }} />}
+          <span style={{ fontSize: '0.55rem', opacity: 0.5, lineHeight: 1 }}>{cell.month}月</span>
+        </div>
         {cell.type !== 'none' && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
             <span style={{ fontSize: '0.7rem', lineHeight: 1 }}>{isAudit ? '監' : '訪'}</span>
