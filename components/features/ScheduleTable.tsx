@@ -80,11 +80,11 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center', minWidth: '1300px' }}>
         <thead style={{ background: '#f8fafc', position: 'sticky', top: 0, zIndex: 30 }}>
           <tr>
-            <th style={{ width: '30px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.4rem 0', fontSize: '0.7rem' }}>No</th>
-            <th className="sticky-col" style={{ textAlign: 'left', width: '160px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.4rem 0.75rem', fontSize: '0.8rem', background: '#f8fafc' }}>企業名</th>
-            <th style={{ width: '60px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', fontSize: '0.7rem' }}>特・実・育</th>
-            <th style={{ width: '40px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', fontSize: '0.7rem' }}>内1年目</th>
-            <th style={{ width: '70px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', fontSize: '0.7rem' }}>内1年目入国</th>
+            <th style={{ width: '30px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>No</th>
+            <th className="sticky-col" style={{ textAlign: 'left', width: '160px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0.5rem', fontSize: '0.8rem', background: '#f8fafc' }}>企業名</th>
+            <th style={{ width: '60px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>特・実・育</th>
+            <th style={{ width: '40px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>内1年目</th>
+            <th style={{ width: '70px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>内1年目入国</th>
             {MONTHS.map(m => {
               const isTodayMonth = m === realMonth && fiscalYear === realFiscalYear;
               const isFocusMonth = m === focusMonth && filterMode === 'month';
@@ -102,12 +102,15 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
                     color: isFocusMonth ? 'white' : (isTodayMonth ? 'var(--primary)' : undefined), 
                     fontWeight: isTodayMonth ? '600' : '500',
                     cursor: 'pointer',
-                    transition: 'all 0.2s ease'
+                    transition: 'all 0.2s ease',
+                    padding: '0.2rem 0'
                   }}
                 >
-                  {m}月
-                  {isFocusMonth && <div style={{ fontSize: '0.5rem', marginTop: '-2px' }}>●</div>}
-                  {!isFocusMonth && isTodayMonth && <div style={{ fontSize: '0.5rem', marginTop: '-2px', color: 'var(--primary)' }}>Today</div>}
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', lineHeight: 1.1 }}>
+                    <span>{m}月</span>
+                    {isFocusMonth && <span style={{ fontSize: '0.5rem', color: 'white' }}>●</span>}
+                    {!isFocusMonth && isTodayMonth && <span style={{ fontSize: '0.45rem', color: 'var(--primary)' }}>Today</span>}
+                  </div>
                 </th>
               );
             })}
