@@ -90,6 +90,7 @@ export async function GET() {
       instrDate:          e.instr_date || '',
       lifeName:           e.life_name || '',
       lifeDate:           e.life_date || '',
+      acceptTypes:        e.accept_types || [],
       schedule:           [], // filled in by page.tsx loadScheduleWithReports
     }));
 
@@ -132,6 +133,7 @@ export async function POST(request: NextRequest) {
       instr_date:           e.instrDate || null,
       life_name:            e.lifeName || null,
       life_date:            e.lifeDate || null,
+      accept_types:         e.acceptTypes || [],
       updated_at:           new Date().toISOString(),
     }));
 

@@ -24,6 +24,29 @@ export const EnterpriseModal: React.FC<EnterpriseModalProps> = ({
             <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>企業名</label>
             <input type="text" placeholder="企業名" value={targetEnt.name} onChange={e => setTargetEnt({...targetEnt, name: e.target.value})} style={inputStyle} />
           </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '5px' }}>実習実施者 (複数選択可)</label>
+            <div style={{ display: 'flex', gap: '1rem', padding: '0.5rem', border: '1px solid var(--card-border)', borderRadius: '4px', background: '#f8fafc' }}>
+              {['実習', '特定', '育成'].map(type => (
+                <label key={type} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.8rem', cursor: 'pointer', fontWeight: '500' }}>
+                  <input 
+                    type="checkbox" 
+                    checked={targetEnt.acceptTypes?.includes(type) || false}
+                    onChange={(e) => {
+                      const current = targetEnt.acceptTypes || [];
+                      if (e.target.checked) {
+                        setTargetEnt({...targetEnt, acceptTypes: [...current, type]});
+                      } else {
+                        setTargetEnt({...targetEnt, acceptTypes: current.filter(t => t !== type)});
+                      }
+                    }}
+                    style={{ cursor: 'pointer', width: '14px', height: '14px' }}
+                  />
+                  {type}
+                </label>
+              ))}
+            </div>
+          </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>特・実・育</label>

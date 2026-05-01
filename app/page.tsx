@@ -42,7 +42,7 @@ export default function AuditSystem() {
         <Header 
           isSyncing={isSyncing} 
           onAddEnterprise={() => { 
-            setTargetEnt({ id: '', name: '', countTokutei: 0, countJisshu23: 0, countJisshu1: 0, entryDateJisshu1: '', schedule: [] }); 
+            setTargetEnt({ id: '', name: '', countTokutei: 0, countJisshu23: 0, countJisshu1: 0, entryDateJisshu1: '', acceptTypes: [], schedule: [] }); 
             setModalMode('add'); 
           }}
           logout={logout}

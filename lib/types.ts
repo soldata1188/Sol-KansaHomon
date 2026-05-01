@@ -28,6 +28,7 @@ export interface Enterprise {
   countJisshu23: number;
   countJisshu1: number;
   entryDateJisshu1: string; // YYYY-MM-DD
+  acceptTypes?: string[]; // e.g., ['実習', '特定', '育成']
   respName?: string;
   respDate?: string;
   instrName?: string;
