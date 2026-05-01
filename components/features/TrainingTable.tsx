@@ -42,10 +42,13 @@ export const TrainingTable: React.FC<TrainingTableProps> = ({
                 <td style={{ fontSize: '0.75rem', borderRight: '1px solid var(--table-border)', color: '#94a3b8' }}>{idx + 1}</td>
                 <td className="sticky-col" onClick={() => onEditEnterprise(ent)} style={{ textAlign: 'left', borderRight: '1px solid var(--table-border)', cursor: 'pointer', color: isMatching ? 'var(--status-amber)' : 'var(--primary)', fontWeight: 'bold', padding: '0.6rem 0.75rem', fontSize: '0.85rem', background: isMatching ? '#fffbeb' : 'white', position: 'sticky', left: 0, zIndex: 10 }}>{isMatching && '🎯 '}{ent.name}</td>
                 <td style={{ borderRight: '1px solid var(--table-border)', padding: '2px', verticalAlign: 'middle' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'center', justifyContent: 'center' }}>
-                    {(ent.acceptTypes || []).map(t => (
-                      <span key={t} style={{ fontSize: '0.55rem', background: '#f1f5f9', border: '1px solid #e2e8f0', padding: '1px 4px', borderRadius: '3px', color: '#475569', lineHeight: 1 }}>{t}</span>
-                    ))}
+                  <div style={{ display: 'flex', flexDirection: 'row', gap: '2px', alignItems: 'center', justifyContent: 'center' }}>
+                    {(ent.acceptTypes || []).map(t => {
+                      const short = t === '実習' ? '実' : t === '特定' ? '特' : t === '育成' ? '育' : t[0];
+                      return (
+                        <span key={t} style={{ fontSize: '0.6rem', fontWeight: 'bold', background: '#f8fafc', border: '1px solid #cbd5e1', padding: '2px', borderRadius: '3px', color: '#475569', lineHeight: 1, width: '16px', textAlign: 'center', display: 'inline-block' }}>{short}</span>
+                      );
+                    })}
                   </div>
                 </td>
                 <td style={{ borderRight: '1px solid var(--table-border)', fontSize: '0.8rem', color: ent.respName ? 'inherit' : '#94a3b8' }}>{ent.respName || '-'}</td>
