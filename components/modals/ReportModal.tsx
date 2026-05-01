@@ -22,7 +22,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1200 }}>
       <div className="card card-modal" style={{ width: '480px', maxHeight: '92vh', overflowY: 'auto' }}>
         <h2 style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--card-border)', paddingBottom: '0.75rem' }}>
-          <span>📝 {entName} — {selectedCell.month}月 報告書入力</span>
+          <span>📝 {entName} — {selectedCell.month}月 入力</span>
           <button onClick={onClose} style={{ border: 'none', background: 'transparent', fontSize: '1.25rem', cursor: 'pointer', padding: '0 5px' }}>×</button>
         </h2>
 
