@@ -42,5 +42,5 @@ export interface SyncPayload {
   timestamp?: string;
   enterprises: Enterprise[];
   cache: Record<number, Record<string, ScheduleCell[]>>;
-  reports?: any[]; // For legacy GAS processing if needed
+  reports?: Record<string, unknown>[]; // For legacy GAS processing if needed
 }

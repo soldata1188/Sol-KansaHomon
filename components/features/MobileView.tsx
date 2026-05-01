@@ -5,22 +5,21 @@ import { formatShortDate } from '@/lib/utils';
 interface MobileViewProps {
   filteredEnterprises: Enterprise[];
   searchTerm: string;
-  focusMonth: number;
   realMonth: number;
   realFiscalYear: number;
   fiscalYear: number;
   onEditEnterprise: (ent: Enterprise) => void;
   openChecklist: (ent: Enterprise, month: number, type: TaskType) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   scrollRef: React.RefObject<any>;
 }
 
 export const MobileView: React.FC<MobileViewProps> = ({
-  filteredEnterprises, searchTerm, focusMonth, realMonth, realFiscalYear, fiscalYear,
+  filteredEnterprises, searchTerm, realMonth, realFiscalYear, fiscalYear,
   onEditEnterprise, openChecklist, scrollRef
 }) => {
   const renderMobileMonthCell = (cell: ScheduleCell, ent: Enterprise) => {
     const isToday = cell.month === realMonth && fiscalYear === realFiscalYear;
-    const isFocus = cell.month === focusMonth;
     const hasReport = !!cell.report?.date && !!cell.report?.staff;
     const isCompleted = cell.status === 'completed' || hasReport;
     const isAudit = cell.type === 'audit';

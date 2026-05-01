@@ -4,7 +4,7 @@ interface ToolbarProps {
   searchTerm: string;
   setSearchTerm: (val: string) => void;
   filterMode: string;
-  setFilterMode: (val: any) => void;
+  setFilterMode: (val: 'all' | 'audit' | 'visit' | 'pending' | 'month') => void;
   viewMode: 'schedule' | 'training';
   setViewMode: (val: 'schedule' | 'training') => void;
   fiscalYear: number;
@@ -28,11 +28,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         </div>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           {viewMode === 'schedule' && [
-            {id:'all',label:'すべて'},
-            {id:'audit',label:'監査'},
-            {id:'visit',label:'訪問'},
-            {id:'pending',label:'未完'},
-            ...(filterMode === 'month' ? [{id:'month',label:'月別'}] : [])
+            {id:'all' as const,label:'すべて'},
+            {id:'audit' as const,label:'監査'},
+            {id:'visit' as const,label:'訪問'},
+            {id:'pending' as const,label:'未完'},
+            ...(filterMode === 'month' ? [{id:'month' as const,label:'月別'}] : [])
           ].map(f => (
             <button key={f.id} onClick={() => setFilterMode(f.id)} style={{ padding: '0.3rem 0', fontSize: '0.75rem', fontWeight: '500', cursor: 'pointer', background: 'transparent', border: 'none', color: filterMode === f.id ? 'var(--primary)' : 'var(--text-muted)', borderBottom: filterMode === f.id ? '2px solid var(--primary)' : '2px solid transparent' }}>{f.label}</button>
           ))}

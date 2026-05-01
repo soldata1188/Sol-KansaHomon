@@ -12,6 +12,7 @@ interface ScheduleTableProps {
   fiscalYear: number;
   onEditEnterprise: (ent: Enterprise) => void;
   openChecklist: (ent: Enterprise, month: number, type: TaskType) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   scrollRef: React.RefObject<any>;
   onMonthClick?: (month: number) => void;
   filterMode?: string;

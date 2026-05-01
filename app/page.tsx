@@ -23,6 +23,7 @@ export default function AuditSystem() {
     handleSetType, handleRemoveSchedule, openChecklist
   } = useAuditSystem();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const scrollRef = useRef<any>(null);
 
   // --- Search Scroll Effect ---
@@ -81,7 +82,6 @@ export default function AuditSystem() {
           <MobileView 
             filteredEnterprises={filteredEnterprises}
             searchTerm={searchTerm}
-            focusMonth={focusMonth}
             realMonth={realMonth}
             realFiscalYear={realFiscalYear}
             fiscalYear={fiscalYear}

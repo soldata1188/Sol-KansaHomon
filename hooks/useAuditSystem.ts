@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Enterprise, ScheduleCell, Report, TaskType, StatusType } from '@/lib/types';
-import { MONTHS, SYNC_API_URL, EMPTY_REPORT } from '@/lib/constants';
+import { SYNC_API_URL, EMPTY_REPORT } from '@/lib/constants';
 import { calculateSchedule } from '@/lib/utils';
 
 export function useAuditSystem() {
@@ -58,7 +58,7 @@ export function useAuditSystem() {
   const loadScheduleWithReports = useCallback((year: number, ents: Enterprise[]): Enterprise[] => {
     const yearCache = cacheRef.current[year] || {};
     return ents.map(ent => {
-      const baseSchedule = calculateSchedule(ent, year);
+      const baseSchedule = calculateSchedule();
       const cached = yearCache[ent.id];
       const merged = baseSchedule.map(baseCell => {
         const found = cached?.find(c => c.month === baseCell.month);
@@ -129,6 +129,7 @@ export function useAuditSystem() {
       try { return localStorage.getItem(key); } catch { return null; }
     };
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (safeGetSession('isLoggedIn') === 'true') setIsAuthenticated(true);
 
     const now = new Date();
@@ -230,10 +231,10 @@ export function useAuditSystem() {
     setEnterprises(prev => {
       let next;
       if (!targetEnt.id) {
-        const fullNewEnt = { ...targetEnt, id: 'ENT' + Date.now(), name: trimmed, schedule: calculateSchedule(targetEnt, fiscalYear) };
+        const fullNewEnt = { ...targetEnt, id: 'ENT' + Date.now(), name: trimmed, schedule: calculateSchedule() };
         next = [...prev, fullNewEnt];
       } else {
-        next = prev.map(e => (e.id === targetEnt.id ? { ...e, ...targetEnt, name: trimmed, schedule: calculateSchedule(targetEnt, fiscalYear) } : e));
+        next = prev.map(e => (e.id === targetEnt.id ? { ...e, ...targetEnt, name: trimmed, schedule: calculateSchedule() } : e));
       }
       return next.sort((a, b) => {
         if (!a.entryDateJisshu1 && !b.entryDateJisshu1) return a.name.localeCompare(b.name, 'ja');

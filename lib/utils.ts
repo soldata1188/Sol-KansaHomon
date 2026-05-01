@@ -1,5 +1,5 @@
 import { MONTHS } from './constants';
-import { Enterprise, ScheduleCell, TaskType, StatusType } from './types';
+import { ScheduleCell, TaskType, StatusType } from './types';
 
 export const formatShortDate = (d: string) => {
   if (!d) return '';
@@ -7,7 +7,7 @@ export const formatShortDate = (d: string) => {
   return parts.length === 3 ? `${parts[1]}/${parts[2]}` : d;
 };
 
-export const calculateSchedule = (_ent: Enterprise, _fiscalYear: number): ScheduleCell[] => {
+export const calculateSchedule = (): ScheduleCell[] => {
   // All cells start empty. Users assign 監査/訪問 manually.
   return MONTHS.map(m => ({ month: m, type: 'none' as TaskType, status: 'pending' as StatusType }));
 };

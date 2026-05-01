@@ -6,6 +6,7 @@ interface TrainingTableProps {
   filteredEnterprises: Enterprise[];
   searchTerm: string;
   onEditEnterprise: (ent: Enterprise) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   scrollRef: React.RefObject<any>;
 }
 
