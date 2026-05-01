@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Enterprise, ScheduleCell, Report, TaskType, StatusType } from '@/lib/types';
+import { Enterprise, ScheduleCell, Report, TaskType, StatusType, SortColumn } from '@/lib/types';
 import { SYNC_API_URL, EMPTY_REPORT } from '@/lib/constants';
 import { calculateSchedule } from '@/lib/utils';
 
@@ -27,6 +27,8 @@ export function useAuditSystem() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterMode, setFilterMode] = useState<'all' | 'audit' | 'visit' | 'pending' | 'month'>('all');
   const [viewMode, setViewMode] = useState<'schedule' | 'training'>('schedule');
+  const [sortColumn, setSortColumn] = useState<SortColumn>('entryDateJisshu1');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
   // --- Auth Logic ---
   const handleLogin = async (e: React.FormEvent) => {
@@ -328,13 +330,51 @@ export function useAuditSystem() {
     return matchesSearch;
   });
 
+  const sortedAndFilteredEnterprises = [...filteredEnterprises].sort((a, b) => {
+    let cmp = 0;
+    if (sortColumn === 'name') {
+      cmp = a.name.localeCompare(b.name, 'ja');
+    } else if (sortColumn === 'acceptTypes') {
+      const aTypes = a.acceptTypes?.join(',') || '';
+      const bTypes = b.acceptTypes?.join(',') || '';
+      cmp = aTypes.localeCompare(bTypes, 'ja');
+    } else if (sortColumn === 'countForeigners') {
+      const aCount = a.countTokutei + a.countJisshu23;
+      const bCount = b.countTokutei + b.countJisshu23;
+      cmp = aCount - bCount;
+    } else if (sortColumn === 'countJisshu1') {
+      cmp = a.countJisshu1 - b.countJisshu1;
+    } else if (sortColumn === 'entryDateJisshu1') {
+      if (!a.entryDateJisshu1 && !b.entryDateJisshu1) cmp = 0;
+      else if (!a.entryDateJisshu1) cmp = 1;
+      else if (!b.entryDateJisshu1) cmp = -1;
+      else cmp = a.entryDateJisshu1.localeCompare(b.entryDateJisshu1);
+    }
+    
+    if (cmp === 0) {
+      cmp = a.name.localeCompare(b.name, 'ja');
+    }
+    
+    return sortDirection === 'asc' ? cmp : -cmp;
+  });
+
+  const handleSort = (column: SortColumn) => {
+    if (sortColumn === column) {
+      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection('desc');
+    }
+  };
+
   return {
     isAuthenticated, password, setPassword, loginError, handleLogin, logout,
-    enterprises, filteredEnterprises, fiscalYear, focusMonth, setFocusMonth, realMonth, realFiscalYear,
+    enterprises, filteredEnterprises: sortedAndFilteredEnterprises, fiscalYear, focusMonth, setFocusMonth, realMonth, realFiscalYear,
     modalMode, setModalMode, targetEnt, setTargetEnt, selectedCell, setSelectedCell,
     tempReport, setTempReport,
     isSyncing, syncToCloud,
     searchTerm, setSearchTerm, filterMode, setFilterMode, viewMode, setViewMode,
+    sortColumn, sortDirection, handleSort,
     changeFiscalYear, handleSaveEnterprise, handleDeleteEnterprise, handleSaveReport,
     handleSetType, handleRemoveSchedule, openChecklist
   };

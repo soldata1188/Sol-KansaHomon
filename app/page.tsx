@@ -19,6 +19,7 @@ export default function AuditSystem() {
     tempReport, setTempReport,
     isSyncing,
     searchTerm, setSearchTerm, filterMode, setFilterMode, viewMode, setViewMode,
+    sortColumn, sortDirection, handleSort,
     changeFiscalYear, handleSaveEnterprise, handleDeleteEnterprise, handleSaveReport,
     handleSetType, handleRemoveSchedule, openChecklist
   } = useAuditSystem();
@@ -78,6 +79,9 @@ export default function AuditSystem() {
               }
             }}
             filterMode={filterMode}
+            sortColumn={sortColumn}
+            sortDirection={sortDirection}
+            onSort={handleSort}
           />
           <MobileView 
             filteredEnterprises={filteredEnterprises}
@@ -96,6 +100,9 @@ export default function AuditSystem() {
           searchTerm={searchTerm}
           onEditEnterprise={(ent) => { setTargetEnt(ent); setModalMode('edit'); }}
           scrollRef={scrollRef}
+          sortColumn={sortColumn}
+          sortDirection={sortDirection}
+          onSort={handleSort}
         />
       )}
 

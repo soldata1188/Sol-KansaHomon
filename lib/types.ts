@@ -44,3 +44,5 @@ export interface SyncPayload {
   cache: Record<number, Record<string, ScheduleCell[]>>;
   reports?: Record<string, unknown>[]; // For legacy GAS processing if needed
 }
+
+export type SortColumn = 'name' | 'acceptTypes' | 'countForeigners' | 'countJisshu1' | 'entryDateJisshu1';

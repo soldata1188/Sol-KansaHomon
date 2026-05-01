@@ -1,5 +1,5 @@
 import React from 'react';
-import { Enterprise } from '@/lib/types';
+import { Enterprise, SortColumn } from '@/lib/types';
 import { formatShortDate, getTrainingStatus } from '@/lib/utils';
 
 interface TrainingTableProps {
@@ -8,10 +8,13 @@ interface TrainingTableProps {
   onEditEnterprise: (ent: Enterprise) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   scrollRef: React.RefObject<any>;
+  sortColumn?: SortColumn;
+  sortDirection?: 'asc' | 'desc';
+  onSort?: (col: SortColumn) => void;
 }
 
 export const TrainingTable: React.FC<TrainingTableProps> = ({
-  filteredEnterprises, searchTerm, onEditEnterprise, scrollRef
+  filteredEnterprises, searchTerm, onEditEnterprise, scrollRef, sortColumn, sortDirection, onSort
 }) => {
   return (
     <div className="table-container" style={{ flex: 1, overflow: 'auto', background: 'white', border: '1px solid var(--table-border)', borderRadius: '4px' }}>
@@ -19,8 +22,12 @@ export const TrainingTable: React.FC<TrainingTableProps> = ({
         <thead style={{ background: '#f8fafc', position: 'sticky', top: 0, zIndex: 30 }}>
           <tr>
             <th style={{ width: '40px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.4rem 0', fontSize: '0.75rem' }}>No</th>
-            <th className="sticky-col" style={{ textAlign: 'center', width: '180px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.4rem 0.75rem', fontSize: '0.8rem', background: '#f8fafc' }}>企業名</th>
-            <th style={{ textAlign: 'center', width: '60px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.4rem 0', fontSize: '0.75rem' }}>受入区分</th>
+            <th className="sticky-col" onClick={() => onSort?.('name')} style={{ cursor: 'pointer', textAlign: 'center', width: '180px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.4rem 0.75rem', fontSize: '0.8rem', background: '#f8fafc' }}>
+              企業名 {sortColumn === 'name' && (sortDirection === 'asc' ? '▲' : '▼')}
+            </th>
+            <th onClick={() => onSort?.('acceptTypes')} style={{ cursor: 'pointer', textAlign: 'center', width: '60px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.4rem 0', fontSize: '0.75rem' }}>
+              受入区分 {sortColumn === 'acceptTypes' && (sortDirection === 'asc' ? '▲' : '▼')}
+            </th>
             <th style={{ width: '120px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', fontSize: '0.75rem' }}>責任者</th>
             <th style={{ width: '100px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', fontSize: '0.75rem' }}>責任受講日</th>
             <th style={{ width: '120px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', fontSize: '0.75rem' }}>指導員</th>

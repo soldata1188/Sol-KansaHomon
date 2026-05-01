@@ -1,5 +1,5 @@
 import React from 'react';
-import { Enterprise, ScheduleCell, TaskType } from '@/lib/types';
+import { Enterprise, ScheduleCell, TaskType, SortColumn } from '@/lib/types';
 import { MONTHS } from '@/lib/constants';
 import { formatShortDate } from '@/lib/utils';
 
@@ -16,11 +16,15 @@ interface ScheduleTableProps {
   scrollRef: React.RefObject<any>;
   onMonthClick?: (month: number) => void;
   filterMode?: string;
+  sortColumn?: SortColumn;
+  sortDirection?: 'asc' | 'desc';
+  onSort?: (col: SortColumn) => void;
 }
 
 export const ScheduleTable: React.FC<ScheduleTableProps> = ({
   filteredEnterprises, searchTerm, focusMonth, realMonth, realFiscalYear, fiscalYear,
-  onEditEnterprise, openChecklist, scrollRef, onMonthClick, filterMode
+  onEditEnterprise, openChecklist, scrollRef, onMonthClick, filterMode,
+  sortColumn, sortDirection, onSort
 }) => {
   const renderCellContent = (cell: ScheduleCell, ent: Enterprise) => {
     const isToday = cell.month === realMonth && fiscalYear === realFiscalYear;
@@ -82,11 +86,21 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
         <thead style={{ background: '#f8fafc', position: 'sticky', top: 0, zIndex: 30 }}>
           <tr>
             <th style={{ textAlign: 'center', width: '30px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>No</th>
-            <th className="sticky-col" style={{ textAlign: 'center', width: '160px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0.5rem', fontSize: '0.8rem', background: '#f8fafc' }}>企業名</th>
-            <th style={{ textAlign: 'center', width: '50px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>受入区分</th>
-            <th style={{ textAlign: 'center', width: '50px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>外国人数</th>
-            <th style={{ textAlign: 'center', width: '50px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>内1年目</th>
-            <th style={{ textAlign: 'center', width: '50px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>内1年目入国</th>
+            <th className="sticky-col" onClick={() => onSort?.('name')} style={{ cursor: 'pointer', textAlign: 'center', width: '160px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0.5rem', fontSize: '0.8rem', background: '#f8fafc' }}>
+              企業名 {sortColumn === 'name' && (sortDirection === 'asc' ? '▲' : '▼')}
+            </th>
+            <th onClick={() => onSort?.('acceptTypes')} style={{ cursor: 'pointer', textAlign: 'center', width: '50px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>
+              受入区分 {sortColumn === 'acceptTypes' && (sortDirection === 'asc' ? '▲' : '▼')}
+            </th>
+            <th onClick={() => onSort?.('countForeigners')} style={{ cursor: 'pointer', textAlign: 'center', width: '50px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>
+              外国人数 {sortColumn === 'countForeigners' && (sortDirection === 'asc' ? '▲' : '▼')}
+            </th>
+            <th onClick={() => onSort?.('countJisshu1')} style={{ cursor: 'pointer', textAlign: 'center', width: '50px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>
+              内1年目 {sortColumn === 'countJisshu1' && (sortDirection === 'asc' ? '▲' : '▼')}
+            </th>
+            <th onClick={() => onSort?.('entryDateJisshu1')} style={{ cursor: 'pointer', textAlign: 'center', width: '50px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>
+              内1年目入国 {sortColumn === 'entryDateJisshu1' && (sortDirection === 'asc' ? '▲' : '▼')}
+            </th>
             {MONTHS.map(m => {
               const isTodayMonth = m === realMonth && fiscalYear === realFiscalYear;
               const isFocusMonth = m === focusMonth && filterMode === 'month';
