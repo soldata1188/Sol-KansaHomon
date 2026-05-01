@@ -27,11 +27,7 @@ export const EnterpriseModal: React.FC<EnterpriseModalProps> = ({
           <div>
             <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '5px' }}>実習実施者 (複数選択可)</label>
             <div style={{ display: 'flex', gap: '1rem', padding: '0.5rem', border: '1px solid var(--card-border)', borderRadius: '4px', background: '#f8fafc' }}>
-              {[
-                { type: '実習', icon: '🔰' },
-                { type: '特定', icon: '🌟' },
-                { type: '育成', icon: '🌱' }
-              ].map(({ type, icon }) => (
+              {['実習', '特定', '育成'].map(type => (
                 <label key={type} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.8rem', cursor: 'pointer', fontWeight: '500' }}>
                   <input 
                     type="checkbox" 
@@ -46,7 +42,7 @@ export const EnterpriseModal: React.FC<EnterpriseModalProps> = ({
                     }}
                     style={{ cursor: 'pointer', width: '14px', height: '14px' }}
                   />
-                  <span>{icon} {type}</span>
+                  {type}
                 </label>
               ))}
             </div>
