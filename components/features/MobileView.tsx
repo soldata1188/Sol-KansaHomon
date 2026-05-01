@@ -61,7 +61,6 @@ export const MobileView: React.FC<MobileViewProps> = ({
         <span style={{ fontSize: '0.55rem', opacity: 0.5, lineHeight: 1 }}>{cell.month}月</span>
         {cell.type !== 'none' && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
-            <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: isCompleted ? 'var(--status-green)' : (isAudit ? 'var(--status-red)' : '#2563EB') }} />
             <span style={{ fontSize: '0.7rem', lineHeight: 1 }}>{isAudit ? '監' : '訪'}</span>
           </div>
         )}

@@ -36,7 +36,6 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
     const isAudit = cell.type === 'audit';
 
     const baseColor = isAudit ? 'var(--status-red)' : 'var(--primary)';
-    const dotColor = isCompleted ? 'var(--status-green)' : baseColor;
     const labelColor = isCompleted ? '#64748B' : baseColor;
     
     // High-visibility background if fully reported (both date and staff)
@@ -58,7 +57,6 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-          <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: dotColor, flexShrink: 0 }} />
           <span style={{ fontSize: '0.7rem', fontWeight: '500', color: labelColor, letterSpacing: '0.02em' }}>
             {isAudit ? '監' : '訪'}
           </span>
