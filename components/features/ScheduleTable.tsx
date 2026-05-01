@@ -83,7 +83,7 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
             <th style={{ textAlign: 'center', width: '30px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>No</th>
             <th className="sticky-col" style={{ textAlign: 'center', width: '160px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0.5rem', fontSize: '0.8rem', background: '#f8fafc' }}>企業名</th>
             <th style={{ textAlign: 'center', width: '50px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>受入区分</th>
-            <th style={{ textAlign: 'center', width: '50px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>特・実・育</th>
+            <th style={{ textAlign: 'center', width: '50px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>外国人数</th>
             <th style={{ textAlign: 'center', width: '50px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>内1年目</th>
             <th style={{ textAlign: 'center', width: '50px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>内1年目入国</th>
             {MONTHS.map(m => {

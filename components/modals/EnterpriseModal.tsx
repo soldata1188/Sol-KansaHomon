@@ -49,7 +49,7 @@ export const EnterpriseModal: React.FC<EnterpriseModalProps> = ({
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>特・実・育</label>
+              <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '3px' }}>外国人数</label>
               <input type="number" placeholder="0" value={targetEnt.countTokutei + targetEnt.countJisshu23} onChange={e => setTargetEnt({...targetEnt, countTokutei: parseInt(e.target.value)||0, countJisshu23: 0})} style={inputStyle} />
             </div>
             <div>
