@@ -17,7 +17,7 @@ export default function AuditSystem() {
     enterprises, filteredEnterprises, fiscalYear, focusMonth, setFocusMonth, realMonth, realFiscalYear,
     modalMode, setModalMode, targetEnt, setTargetEnt, selectedCell, 
     tempReport, setTempReport,
-    isSyncing, syncToCloud,
+    isSyncing,
     searchTerm, setSearchTerm, filterMode, setFilterMode, viewMode, setViewMode,
     changeFiscalYear, handleSaveEnterprise, handleDeleteEnterprise, handleSaveReport,
     handleSetType, handleRemoveSchedule, openChecklist
@@ -41,7 +41,6 @@ export default function AuditSystem() {
       <header style={{ flex: '0 0 auto', marginBottom: '0.6rem' }}>
         <Header 
           isSyncing={isSyncing} 
-          syncToCloud={syncToCloud} 
           onAddEnterprise={() => { 
             setTargetEnt({ id: '', name: '', countTokutei: 0, countJisshu23: 0, countJisshu1: 0, entryDateJisshu1: '', schedule: [] }); 
             setModalMode('add'); 
