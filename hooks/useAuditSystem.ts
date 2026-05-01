@@ -107,6 +107,9 @@ export function useAuditSystem() {
         reports
       };
 
+      console.log('[syncToCloud] Sending:', data.length, 'enterprises,', 
+        Object.keys(cacheRef.current).map(y => `FY${y}:${Object.keys(cacheRef.current[Number(y)] || {}).length}ents`).join(', '));
+
       const response = await fetch(SYNC_API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -143,14 +146,19 @@ export function useAuditSystem() {
       setIsSyncing(true);
       let isCloudSuccess = false;
       let finalEnts: Enterprise[] = [];
-      let finalCache: Record<string, Record<string, ScheduleCell[]>> = {};
+      let finalCache: Record<number, Record<string, ScheduleCell[]>> = {};
 
       try {
         const response = await fetch(SYNC_API_URL, { cache: 'no-store' });
         if (response.ok) {
           const cloudData = await response.json();
           finalEnts = cloudData?.enterprises || [];
-          finalCache = cloudData?.cache || {};
+          // Normalize cache keys to numbers to prevent string/number key mismatch
+          const rawCache = cloudData?.cache || {};
+          Object.keys(rawCache).forEach(yearStr => {
+            const yearNum = Number(yearStr);
+            finalCache[yearNum] = rawCache[yearStr];
+          });
           isCloudSuccess = true;
           
           try { localStorage.setItem('sol_enterprises', JSON.stringify(finalEnts)); } catch { /* silent */ }

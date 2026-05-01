@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
     if (entErr) throw entErr;
 
     // ── 2. Upsert schedule_cells from cache ────────────────
-    const cellRows: {
+    const activeCellRows: {
       enterprise_id: string;
       fiscal_year: number;
       month: number;
@@ -152,31 +152,48 @@ export async function POST(request: NextRequest) {
       status: string;
     }[] = [];
 
+    const removedCells: { enterprise_id: string; fiscal_year: number; month: number }[] = [];
+
     Object.entries(cache).forEach(([yearStr, yearObj]) => {
       const fiscal_year = Number(yearStr);
       Object.entries(yearObj).forEach(([entId, cells]) => {
         cells.forEach(cell => {
-          cellRows.push({
-            enterprise_id: entId,
-            fiscal_year,
-            month:  cell.month,
-            type:   cell.type,
-            status: cell.status,
-          });
+          if (cell.type !== 'none') {
+            activeCellRows.push({
+              enterprise_id: entId,
+              fiscal_year,
+              month:  cell.month,
+              type:   cell.type,
+              status: cell.status,
+            });
+          } else {
+            removedCells.push({ enterprise_id: entId, fiscal_year, month: cell.month });
+          }
         });
       });
     });
 
-    if (cellRows.length > 0) {
-      // Process in chunks to avoid hitting request size limits
+    // Upsert only active (non-none) cells
+    if (activeCellRows.length > 0) {
       const CHUNK = 500;
-      for (let i = 0; i < cellRows.length; i += CHUNK) {
-        const chunk = cellRows.slice(i, i + CHUNK);
+      for (let i = 0; i < activeCellRows.length; i += CHUNK) {
+        const chunk = activeCellRows.slice(i, i + CHUNK);
         const { error: cellErr } = await supabase
           .from('schedule_cells')
           .upsert(chunk, { onConflict: 'enterprise_id,fiscal_year,month' });
         if (cellErr) throw cellErr;
       }
+    }
+
+    // Delete cells that have been reset to 'none'
+    for (const rc of removedCells) {
+      await supabase
+        .from('schedule_cells')
+        .delete()
+        .eq('enterprise_id', rc.enterprise_id)
+        .eq('fiscal_year', rc.fiscal_year)
+        .eq('month', rc.month)
+        .eq('type', 'none');
     }
 
     // ── 3. Upsert reports (only completed cells with report data) ──
