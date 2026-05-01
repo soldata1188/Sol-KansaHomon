@@ -25,10 +25,18 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
     const isToday = cell.month === realMonth && fiscalYear === realFiscalYear;
     if (cell.type === 'none') {
       return (
-        <button
-          onClick={() => openChecklist(ent, cell.month, cell.type)}
-          style={{ width: '100%', height: '100%', border: 'none', background: 'transparent', cursor: 'pointer', color: '#E2E8F0', fontSize: '0.7rem' }}
-        >＋</button>
+        <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+          {isToday && (
+            <span style={{ 
+              position: 'absolute', top: '3px', right: '3px', width: '5px', height: '5px', 
+              borderRadius: '50%', background: 'var(--status-red)', zIndex: 2
+            }} />
+          )}
+          <button
+            onClick={() => openChecklist(ent, cell.month, cell.type)}
+            style={{ width: '100%', height: '100%', border: 'none', background: 'transparent', cursor: 'pointer', color: '#E2E8F0', fontSize: '0.7rem' }}
+          >＋</button>
+        </div>
       );
     }
     const hasReport = !!cell.report?.date && !!cell.report?.staff;
@@ -53,9 +61,15 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
           cursor: 'pointer', padding: '4px 2px', height: '100%',
           background: bgColor,
-          borderLeft: isToday ? '2px solid var(--primary)' : 'none',
+          position: 'relative'
         }}
       >
+        {isToday && (
+          <span style={{ 
+            position: 'absolute', top: '3px', right: '3px', width: '5px', height: '5px', 
+            borderRadius: '50%', background: 'var(--status-red)', zIndex: 2
+          }} />
+        )}
         <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
           <span style={{ fontSize: '0.7rem', fontWeight: '500', color: labelColor, letterSpacing: '0.02em' }}>
             {isAudit ? '監' : '訪'}

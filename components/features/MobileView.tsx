@@ -54,10 +54,15 @@ export const MobileView: React.FC<MobileViewProps> = ({
           border: border,
           position: 'relative',
           fontWeight: '500',
-          borderLeft: isToday ? '2px solid var(--primary)' : undefined,
           fontSize: '0.65rem'
         }}
       >
+        {isToday && (
+          <span style={{ 
+            position: 'absolute', top: '3px', right: '3px', width: '5px', height: '5px', 
+            borderRadius: '50%', background: 'var(--status-red)', zIndex: 2
+          }} />
+        )}
         <span style={{ fontSize: '0.55rem', opacity: 0.5, lineHeight: 1 }}>{cell.month}月</span>
         {cell.type !== 'none' && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
