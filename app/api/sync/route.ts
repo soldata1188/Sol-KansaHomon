@@ -192,8 +192,7 @@ export async function POST(request: NextRequest) {
         .delete()
         .eq('enterprise_id', rc.enterprise_id)
         .eq('fiscal_year', rc.fiscal_year)
-        .eq('month', rc.month)
-        .eq('type', 'none');
+        .eq('month', rc.month);
     }
 
     // ── 3. Upsert reports (only completed cells with report data) ──
