@@ -17,7 +17,7 @@ export default function AuditSystem() {
     enterprises, filteredEnterprises, fiscalYear, focusMonth, setFocusMonth, realMonth, realFiscalYear,
     modalMode, setModalMode, targetEnt, setTargetEnt, selectedCell, 
     tempReport, setTempReport,
-    isSyncing,
+    isSyncing, refreshFromCloud,
     searchTerm, setSearchTerm, filterMode, setFilterMode, viewMode, setViewMode,
     sortColumn, sortDirection, handleSort,
     changeFiscalYear, handleSaveEnterprise, handleDeleteEnterprise, handleSaveReport,
@@ -55,6 +55,7 @@ export default function AuditSystem() {
           viewMode={viewMode} setViewMode={setViewMode}
           fiscalYear={fiscalYear} changeFiscalYear={changeFiscalYear}
           filteredCount={filteredEnterprises.length} totalCount={enterprises.length}
+          isSyncing={isSyncing} onRefresh={refreshFromCloud}
         />
       </header>
 

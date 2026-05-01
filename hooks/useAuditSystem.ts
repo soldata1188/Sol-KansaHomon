@@ -194,6 +194,43 @@ export function useAuditSystem() {
     loadData();
   }, [loadScheduleWithReports]);
 
+  // --- Refresh from Cloud (manual) ---
+  const refreshFromCloud = useCallback(async () => {
+    setIsSyncing(true);
+    try {
+      const response = await fetch(SYNC_API_URL, { cache: 'no-store' });
+      if (response.ok) {
+        const cloudData = await response.json();
+        const cloudEnts: Enterprise[] = cloudData?.enterprises || [];
+        const cloudCache: Record<number, Record<string, ScheduleCell[]>> = {};
+        const rawCache = cloudData?.cache || {};
+        Object.keys(rawCache).forEach(yearStr => {
+          cloudCache[Number(yearStr)] = rawCache[yearStr];
+        });
+
+        cacheRef.current = cloudCache;
+        const currentFY = new Date().getMonth() + 1 >= 4 ? new Date().getFullYear() : new Date().getFullYear() - 1;
+        const sorted = cloudEnts.sort((a, b) => {
+          if (!a.entryDateJisshu1 && !b.entryDateJisshu1) return a.name.localeCompare(b.name, 'ja');
+          if (!a.entryDateJisshu1) return 1;
+          if (!b.entryDateJisshu1) return -1;
+          const dateCompare = b.entryDateJisshu1.localeCompare(a.entryDateJisshu1);
+          if (dateCompare !== 0) return dateCompare;
+          return a.name.localeCompare(b.name, 'ja');
+        });
+        setEnterprises(loadScheduleWithReports(currentFY, sorted));
+
+        try { localStorage.setItem('sol_enterprises', JSON.stringify(cloudEnts)); } catch { /* silent */ }
+        try { localStorage.setItem('sol_cache', JSON.stringify(cloudCache)); } catch { /* silent */ }
+        console.log('🔄 クラウドから再読み込み完了');
+      }
+    } catch (e) {
+      console.error('❌ 再読み込みエラー:', e);
+    } finally {
+      setIsSyncing(false);
+    }
+  }, [loadScheduleWithReports]);
+
   // Sync Effect
   useEffect(() => {
     if (!isAuthenticated || !isInitialLoadDone || enterprises.length === 0) return;
@@ -390,7 +427,7 @@ export function useAuditSystem() {
     enterprises, filteredEnterprises: sortedAndFilteredEnterprises, fiscalYear, focusMonth, setFocusMonth, realMonth, realFiscalYear,
     modalMode, setModalMode, targetEnt, setTargetEnt, selectedCell, setSelectedCell,
     tempReport, setTempReport,
-    isSyncing, syncToCloud,
+    isSyncing, syncToCloud, refreshFromCloud,
     searchTerm, setSearchTerm, filterMode, setFilterMode, viewMode, setViewMode,
     sortColumn, sortDirection, handleSort,
     changeFiscalYear, handleSaveEnterprise, handleDeleteEnterprise, handleSaveReport,

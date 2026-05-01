@@ -11,12 +11,14 @@ interface ToolbarProps {
   changeFiscalYear: (year: number) => void;
   filteredCount: number;
   totalCount: number;
+  isSyncing?: boolean;
+  onRefresh?: () => void;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
   searchTerm, setSearchTerm, filterMode, setFilterMode, viewMode, setViewMode,
   fiscalYear, changeFiscalYear,
-  filteredCount, totalCount
+  filteredCount, totalCount, isSyncing, onRefresh
 }) => {
   return (
     <>
@@ -37,7 +39,23 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             <button key={f.id} onClick={() => setFilterMode(f.id)} style={{ padding: '0.3rem 0', fontSize: '0.75rem', fontWeight: '500', cursor: 'pointer', background: 'transparent', border: 'none', color: filterMode === f.id ? 'var(--primary)' : 'var(--text-muted)', borderBottom: filterMode === f.id ? '2px solid var(--primary)' : '2px solid transparent' }}>{f.label}</button>
           ))}
         </div>
-        <div style={{ marginLeft: 'auto', fontSize: '0.75rem', color: 'var(--text-muted)' }}>表示: <strong>{filteredCount}</strong> / {totalCount} 社</div>
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>表示: <strong>{filteredCount}</strong> / {totalCount} 社</span>
+          <button 
+            onClick={onRefresh} 
+            disabled={isSyncing}
+            title="クラウドから再読み込み"
+            style={{ 
+              padding: '0.3rem 0.6rem', fontSize: '0.7rem', cursor: isSyncing ? 'wait' : 'pointer', 
+              background: 'white', border: '1px solid var(--card-border)', borderRadius: '4px', 
+              color: 'var(--primary)', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '0.3rem',
+              opacity: isSyncing ? 0.6 : 1, transition: 'all 0.2s'
+            }}
+          >
+            <span style={{ display: 'inline-block', animation: isSyncing ? 'spin 1s linear infinite' : 'none' }}>↻</span>
+            {isSyncing ? '同期中...' : '再読込'}
+          </button>
+        </div>
       </div>
 
       {/* Navigation & View Toggle */}
