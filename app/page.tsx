@@ -20,7 +20,7 @@ export default function AuditSystem() {
     isSyncing, syncToCloud,
     searchTerm, setSearchTerm, filterMode, setFilterMode, viewMode, setViewMode,
     changeFiscalYear, handleSaveEnterprise, handleDeleteEnterprise, handleSaveReport,
-    handleAutoFillAudits, handleAutoFillVisits, handleSetType, handleRemoveSchedule, openChecklist
+    handleSetType, handleRemoveSchedule, openChecklist
   } = useAuditSystem();
 
   const scrollRef = useRef<any>(null);
@@ -53,7 +53,6 @@ export default function AuditSystem() {
           filterMode={filterMode} setFilterMode={setFilterMode}
           viewMode={viewMode} setViewMode={setViewMode}
           fiscalYear={fiscalYear} changeFiscalYear={changeFiscalYear}
-          handleAutoFillAudits={handleAutoFillAudits} handleAutoFillVisits={handleAutoFillVisits}
           filteredCount={filteredEnterprises.length} totalCount={enterprises.length}
         />
       </header>

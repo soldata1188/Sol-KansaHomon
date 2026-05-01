@@ -9,15 +9,13 @@ interface ToolbarProps {
   setViewMode: (val: 'schedule' | 'training') => void;
   fiscalYear: number;
   changeFiscalYear: (year: number) => void;
-  handleAutoFillAudits: () => void;
-  handleAutoFillVisits: () => void;
   filteredCount: number;
   totalCount: number;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
   searchTerm, setSearchTerm, filterMode, setFilterMode, viewMode, setViewMode,
-  fiscalYear, changeFiscalYear, handleAutoFillAudits, handleAutoFillVisits,
+  fiscalYear, changeFiscalYear,
   filteredCount, totalCount
 }) => {
   return (
@@ -64,14 +62,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               {year}年度
             </button>
           ))}
-        </div>
-        <div className="toolbar-actions" style={{ display: 'flex', gap: '0.4rem' }}>
-          <button className="btn btn-outline" onClick={handleAutoFillAudits}>
-            <span>⚙️</span> 監査自動補完
-          </button>
-          <button className="btn btn-outline" onClick={handleAutoFillVisits}>
-            <span>⚙️</span> 訪問自動補完
-          </button>
         </div>
       </div>
 

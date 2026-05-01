@@ -273,124 +273,6 @@ export function useAuditSystem() {
     setModalMode('none');
   };
 
-  const handleAutoFillAudits = () => {
-    if (!confirm(`${fiscalYear}年度の「監査」スケジュールを自動補完しますか？\n（過去の監査日または入国日を基準に3ヶ月ごとに設定します）`)) return;
-    let updatedCount = 0;
-    const newCache = { ...cacheRef.current };
-    const getScheduleForYear = (ent: Enterprise, year: number) => {
-      if (!newCache[year]) newCache[year] = {};
-      if (!newCache[year][ent.id]) newCache[year][ent.id] = calculateSchedule(ent, year);
-      return newCache[year][ent.id];
-    };
-
-    enterprises.forEach(ent => {
-      let anchorDate: Date | null = null;
-
-      // Priority 1: Find the latest completed audit in history
-      Object.keys(newCache).forEach(y => {
-        newCache[Number(y)][ent.id]?.forEach(cell => {
-          if (cell.type === 'audit' && cell.status === 'completed' && cell.report?.date) {
-            const d = new Date(cell.report.date);
-            if (!anchorDate || d > anchorDate) anchorDate = d;
-          }
-        });
-      });
-
-      // Priority 2: If no completed audit, find the earliest pending audit in the current year
-      if (!anchorDate) {
-        const currentSch = getScheduleForYear(ent, fiscalYear);
-        for (const cell of currentSch) {
-          if (cell.type === 'audit') {
-            const y = cell.month >= 4 ? fiscalYear : fiscalYear + 1;
-            anchorDate = new Date(y, cell.month - 1, 15); // Approximate middle of the month
-            break;
-          }
-        }
-      }
-
-      // Priority 3: If still no anchor, use the 1st-year entry date
-      if (!anchorDate && ent.entryDateJisshu1) {
-        anchorDate = new Date(ent.entryDateJisshu1);
-      }
-
-      // If absolutely no reference point, skip this enterprise
-      if (!anchorDate) return;
-
-      const targetMaxDate = new Date(fiscalYear + 1, 2, 31); // End of current fiscal year
-      let nextDate = new Date(anchorDate);
-      let safety = 0;
-      
-      while (nextDate <= targetMaxDate && safety < 100) {
-        safety++;
-        nextDate.setMonth(nextDate.getMonth() + 3); // Advance by 3 months
-        
-        const y = nextDate.getFullYear();
-        const m = nextDate.getMonth() + 1;
-        const fy = m >= 4 ? y : y - 1;
-        
-        // Only autofill the currently viewed fiscal year
-        if (fy !== fiscalYear) continue;
-
-        const sch = getScheduleForYear(ent, fy);
-        const cell = sch.find(c => c.month === m);
-        
-        // Overwrite if it's empty OR if it's a pending visit
-        if (cell && (cell.type === 'none' || (cell.type === 'visit' && cell.status === 'pending'))) {
-          cell.type = 'audit'; 
-          cell.status = 'pending'; 
-          updatedCount++;
-        }
-      }
-    });
-
-    if (updatedCount > 0) {
-      cacheRef.current = newCache;
-      const updatedEnts = loadScheduleWithReports(fiscalYear, enterprises);
-      setEnterprises(updatedEnts);
-      setTimeout(() => syncToCloud(updatedEnts), 500);
-      alert(`${updatedCount}件の「監査」を自動補完しました。`);
-    } else {
-      alert('補完するスケジュールがありませんでした。基準となるデータ（過去の監査日や入国日）を確認してください。');
-    }
-  };
-
-  const handleAutoFillVisits = () => {
-    if (!confirm(`${fiscalYear}年度の空き月に「訪問」スケジュールを自動補完しますか？\n（監査がある月や受入人数が0の企業は除外されます）`)) return;
-    let updatedCount = 0;
-    const newCache = { ...cacheRef.current };
-    const getScheduleForYear = (ent: Enterprise, year: number) => {
-      if (!newCache[year]) newCache[year] = {};
-      if (!newCache[year][ent.id]) newCache[year][ent.id] = calculateSchedule(ent, year);
-      return newCache[year][ent.id];
-    };
-
-    enterprises.forEach(ent => {
-      // Only schedule visits if the enterprise has active trainees
-      const totalTrainees = ent.countTokutei + ent.countJisshu23 + ent.countJisshu1;
-      if (totalTrainees === 0 && !ent.entryDateJisshu1) return;
-
-      const sch = getScheduleForYear(ent, fiscalYear);
-      sch.forEach(cell => {
-        // Smart Logic: Fill gaps. If the month is empty, fill with Visit.
-        if (cell.type === 'none') {
-          cell.type = 'visit';
-          cell.status = 'pending';
-          updatedCount++;
-        }
-      });
-    });
-
-    if (updatedCount > 0) {
-      cacheRef.current = newCache;
-      const updatedEnts = loadScheduleWithReports(fiscalYear, enterprises);
-      setEnterprises(updatedEnts);
-      setTimeout(() => syncToCloud(updatedEnts), 500);
-      alert(`${updatedCount}件の「訪問」を自動補完しました。`);
-    } else {
-      alert('補完する空きスケジュールがありませんでした。');
-    }
-  };
-
   const handleSetType = (newType: TaskType) => {
     if (!selectedCell) return;
     setEnterprises(prev => {
@@ -449,6 +331,6 @@ export function useAuditSystem() {
     isSyncing, syncToCloud,
     searchTerm, setSearchTerm, filterMode, setFilterMode, viewMode, setViewMode,
     changeFiscalYear, handleSaveEnterprise, handleDeleteEnterprise, handleSaveReport,
-    handleAutoFillAudits, handleAutoFillVisits, handleSetType, handleRemoveSchedule, openChecklist
+    handleSetType, handleRemoveSchedule, openChecklist
   };
 }
