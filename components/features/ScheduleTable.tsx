@@ -201,35 +201,51 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
             top: popover.y,
             transform: 'translateX(-50%)',
             zIndex: 100,
-            background: 'white',
-            border: '1px solid #e2e8f0',
-            borderRadius: '6px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
             display: 'flex',
-            gap: '2px',
-            padding: '4px',
+            flexDirection: 'column',
+            alignItems: 'center',
           }}
         >
-          <button
-            onClick={() => handlePopoverSelect('visit')}
-            style={{
-              padding: '6px 14px', fontSize: '0.75rem', fontWeight: '600',
-              background: '#eff6ff', color: '#1D4ED8', border: '1px solid #bfdbfe',
-              borderRadius: '4px', cursor: 'pointer', whiteSpace: 'nowrap',
-            }}
-          >
-            訪問
-          </button>
-          <button
-            onClick={() => handlePopoverSelect('audit')}
-            style={{
-              padding: '6px 14px', fontSize: '0.75rem', fontWeight: '600',
-              background: '#fef2f2', color: '#DC2626', border: '1px solid #fecaca',
-              borderRadius: '4px', cursor: 'pointer', whiteSpace: 'nowrap',
-            }}
-          >
-            監査
-          </button>
+          {/* Arrow */}
+          <div style={{ width: 0, height: 0, borderLeft: '5px solid transparent', borderRight: '5px solid transparent', borderBottom: '5px solid #e2e8f0' }} />
+          {/* Card */}
+          <div style={{
+            background: 'white',
+            border: '1px solid #e2e8f0',
+            borderRadius: '8px',
+            boxShadow: '0 2px 8px rgba(15,23,42,0.08)',
+            display: 'flex',
+            gap: '3px',
+            padding: '3px',
+          }}>
+            <button
+              onClick={() => handlePopoverSelect('visit')}
+              style={{
+                padding: '4px 10px', fontSize: '0.65rem', fontWeight: '500', letterSpacing: '0.03em',
+                background: 'transparent', color: '#1D4ED8', border: 'none',
+                borderRadius: '5px', cursor: 'pointer', whiteSpace: 'nowrap',
+                transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = '#eff6ff')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            >
+              訪問
+            </button>
+            <div style={{ width: '1px', background: '#f1f5f9', margin: '3px 0' }} />
+            <button
+              onClick={() => handlePopoverSelect('audit')}
+              style={{
+                padding: '4px 10px', fontSize: '0.65rem', fontWeight: '500', letterSpacing: '0.03em',
+                background: 'transparent', color: '#DC2626', border: 'none',
+                borderRadius: '5px', cursor: 'pointer', whiteSpace: 'nowrap',
+                transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = '#fef2f2')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            >
+              監査
+            </button>
+          </div>
         </div>
       )}
     </div>
