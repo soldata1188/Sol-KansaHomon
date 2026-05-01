@@ -58,7 +58,7 @@ export const MobileView: React.FC<MobileViewProps> = ({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
-          {isToday && <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--status-red)', flexShrink: 0 }} />}
+          {isToday && cell.type !== 'none' && <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--status-red)', flexShrink: 0 }} />}
           <span style={{ fontSize: '0.55rem', opacity: 0.5, lineHeight: 1 }}>{cell.month}月</span>
         </div>
         {cell.type !== 'none' && (

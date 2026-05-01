@@ -29,9 +29,6 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
           onClick={() => openChecklist(ent, cell.month, cell.type)}
           style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', cursor: 'pointer' }}
         >
-          {isToday && (
-            <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--status-red)', flexShrink: 0 }} />
-          )}
           <span style={{ color: '#E2E8F0', fontSize: '0.7rem' }}>＋</span>
         </div>
       );
