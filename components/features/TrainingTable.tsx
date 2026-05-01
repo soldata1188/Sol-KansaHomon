@@ -19,6 +19,7 @@ export const TrainingTable: React.FC<TrainingTableProps> = ({
           <tr>
             <th style={{ width: '40px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.4rem 0', fontSize: '0.75rem' }}>No</th>
             <th className="sticky-col" style={{ textAlign: 'center', width: '180px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.4rem 0.75rem', fontSize: '0.8rem', background: '#f8fafc' }}>企業名</th>
+            <th style={{ textAlign: 'center', width: '60px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.4rem 0', fontSize: '0.75rem' }}>受入区分</th>
             <th style={{ width: '120px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', fontSize: '0.75rem' }}>責任者</th>
             <th style={{ width: '100px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', fontSize: '0.75rem' }}>責任受講日</th>
             <th style={{ width: '120px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', fontSize: '0.75rem' }}>指導員</th>
@@ -40,6 +41,13 @@ export const TrainingTable: React.FC<TrainingTableProps> = ({
               <tr key={ent.id} ref={isFirstMatch ? scrollRef : null} style={{ borderBottom: '1px solid var(--table-border)', background: isMatching ? '#fffbeb' : 'inherit' }}>
                 <td style={{ fontSize: '0.75rem', borderRight: '1px solid var(--table-border)', color: '#94a3b8' }}>{idx + 1}</td>
                 <td className="sticky-col" onClick={() => onEditEnterprise(ent)} style={{ textAlign: 'left', borderRight: '1px solid var(--table-border)', cursor: 'pointer', color: isMatching ? 'var(--status-amber)' : 'var(--primary)', fontWeight: 'bold', padding: '0.6rem 0.75rem', fontSize: '0.85rem', background: isMatching ? '#fffbeb' : 'white', position: 'sticky', left: 0, zIndex: 10 }}>{isMatching && '🎯 '}{ent.name}</td>
+                <td style={{ borderRight: '1px solid var(--table-border)', padding: '2px', verticalAlign: 'middle' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'center', justifyContent: 'center' }}>
+                    {(ent.acceptTypes || []).map(t => (
+                      <span key={t} style={{ fontSize: '0.55rem', background: '#f1f5f9', border: '1px solid #e2e8f0', padding: '1px 4px', borderRadius: '3px', color: '#475569', lineHeight: 1 }}>{t}</span>
+                    ))}
+                  </div>
+                </td>
                 <td style={{ borderRight: '1px solid var(--table-border)', fontSize: '0.8rem', color: ent.respName ? 'inherit' : '#94a3b8' }}>{ent.respName || '-'}</td>
                 <td style={{ borderRight: '1px solid var(--table-border)', fontSize: '0.75rem' }}>
                   {ent.respDate ? <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', padding: '4px 0' }}>
