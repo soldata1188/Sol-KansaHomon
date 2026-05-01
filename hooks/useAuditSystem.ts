@@ -331,6 +331,18 @@ export function useAuditSystem() {
     setModalMode('none');
   };
 
+  const handleSetTypeDirect = (entId: string, month: number, newType: TaskType) => {
+    setEnterprises(prev => {
+      const updated = prev.map(ent => {
+        if (ent.id !== entId) return ent;
+        return { ...ent, schedule: ent.schedule.map(c => c.month === month ? { ...c, type: newType, status: 'pending' as StatusType, report: undefined } : c) };
+      });
+      saveCurrentToCache(fiscalYear, updated);
+      setTimeout(() => syncToCloud(updated), 0);
+      return updated;
+    });
+  };
+
   const handleRemoveSchedule = () => {
     if (!selectedCell || !confirm('解除しますか？')) return;
     setEnterprises(prev => {
@@ -431,6 +443,6 @@ export function useAuditSystem() {
     searchTerm, setSearchTerm, filterMode, setFilterMode, viewMode, setViewMode,
     sortColumn, sortDirection, handleSort,
     changeFiscalYear, handleSaveEnterprise, handleDeleteEnterprise, handleSaveReport,
-    handleSetType, handleRemoveSchedule, openChecklist
+    handleSetType, handleSetTypeDirect, handleRemoveSchedule, openChecklist
   };
 }

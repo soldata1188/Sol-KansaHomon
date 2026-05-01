@@ -21,7 +21,7 @@ export default function AuditSystem() {
     searchTerm, setSearchTerm, filterMode, setFilterMode, viewMode, setViewMode,
     sortColumn, sortDirection, handleSort,
     changeFiscalYear, handleSaveEnterprise, handleDeleteEnterprise, handleSaveReport,
-    handleSetType, handleRemoveSchedule, openChecklist
+    handleSetType, handleSetTypeDirect, handleRemoveSchedule, openChecklist
   } = useAuditSystem();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -70,6 +70,7 @@ export default function AuditSystem() {
             fiscalYear={fiscalYear}
             onEditEnterprise={(ent) => { setTargetEnt(ent); setModalMode('edit'); }}
             openChecklist={openChecklist}
+            onSetType={handleSetTypeDirect}
             scrollRef={scrollRef}
             onMonthClick={(m) => {
               if (focusMonth === m && filterMode === 'month') {

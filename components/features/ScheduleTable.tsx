@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef as useRefLocal, useEffect } from 'react';
 import { Enterprise, ScheduleCell, TaskType, SortColumn } from '@/lib/types';
 import { MONTHS } from '@/lib/constants';
 import { formatShortDate } from '@/lib/utils';
@@ -12,6 +12,7 @@ interface ScheduleTableProps {
   fiscalYear: number;
   onEditEnterprise: (ent: Enterprise) => void;
   openChecklist: (ent: Enterprise, month: number, type: TaskType) => void;
+  onSetType: (entId: string, month: number, type: TaskType) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   scrollRef: React.RefObject<any>;
   onMonthClick?: (month: number) => void;
@@ -23,16 +24,43 @@ interface ScheduleTableProps {
 
 export const ScheduleTable: React.FC<ScheduleTableProps> = ({
   filteredEnterprises, searchTerm, focusMonth, realMonth, realFiscalYear, fiscalYear,
-  onEditEnterprise, openChecklist, scrollRef, onMonthClick, filterMode,
+  onEditEnterprise, openChecklist, onSetType, scrollRef, onMonthClick, filterMode,
   sortColumn, sortDirection, onSort
 }) => {
+  const [popover, setPopover] = useState<{ entId: string; month: number; x: number; y: number } | null>(null);
+  const popoverRef = useRefLocal<HTMLDivElement>(null);
+
+  // Close popover when clicking outside
+  useEffect(() => {
+    if (!popover) return;
+    const handleClick = (e: MouseEvent) => {
+      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
+        setPopover(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [popover]);
+
+  const handlePlusClick = (e: React.MouseEvent, ent: Enterprise, month: number) => {
+    e.stopPropagation();
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    setPopover({ entId: ent.id, month, x: rect.left + rect.width / 2, y: rect.bottom + 4 });
+  };
+
+  const handlePopoverSelect = (type: TaskType) => {
+    if (!popover) return;
+    onSetType(popover.entId, popover.month, type);
+    setPopover(null);
+  };
+
   const renderCellContent = (cell: ScheduleCell, ent: Enterprise) => {
     const isToday = cell.month === realMonth && fiscalYear === realFiscalYear;
     if (cell.type === 'none') {
       return (
         <div 
-          onClick={() => openChecklist(ent, cell.month, cell.type)}
-          style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', cursor: 'pointer' }}
+          onClick={(e) => handlePlusClick(e, ent, cell.month)}
+          style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
         >
           <span style={{ color: '#E2E8F0', fontSize: '0.7rem' }}>＋</span>
         </div>
@@ -45,10 +73,9 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
     const baseColor = isAudit ? 'var(--status-red)' : 'var(--primary)';
     const labelColor = isCompleted ? '#64748B' : baseColor;
     
-    // High-visibility background if fully reported (both date and staff)
     let bgColor = 'transparent';
     if (hasReport) {
-      bgColor = isAudit ? '#fee2e2' : '#dbeafe'; // Slightly stronger than the default bg
+      bgColor = isAudit ? '#fee2e2' : '#dbeafe';
     } else if (isCompleted) {
       bgColor = isAudit ? 'var(--status-red-bg)' : 'var(--primary-light)';
     }
@@ -81,7 +108,7 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
   };
 
   return (
-    <div className="table-container desktop-only" style={{ flex: 1, overflow: 'auto', background: 'white', border: '1px solid var(--table-border)', borderRadius: '4px' }}>
+    <div className="table-container desktop-only" style={{ flex: 1, overflow: 'auto', background: 'white', border: '1px solid var(--table-border)', borderRadius: '4px', position: 'relative' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center', minWidth: '1300px' }}>
         <thead style={{ background: '#f8fafc', position: 'sticky', top: 0, zIndex: 30 }}>
           <tr>
@@ -163,6 +190,48 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
           })}
         </tbody>
       </table>
+
+      {/* Inline Popover */}
+      {popover && (
+        <div 
+          ref={popoverRef}
+          style={{
+            position: 'fixed',
+            left: popover.x,
+            top: popover.y,
+            transform: 'translateX(-50%)',
+            zIndex: 100,
+            background: 'white',
+            border: '1px solid #e2e8f0',
+            borderRadius: '6px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
+            display: 'flex',
+            gap: '2px',
+            padding: '4px',
+          }}
+        >
+          <button
+            onClick={() => handlePopoverSelect('visit')}
+            style={{
+              padding: '6px 14px', fontSize: '0.75rem', fontWeight: '600',
+              background: '#eff6ff', color: '#1D4ED8', border: '1px solid #bfdbfe',
+              borderRadius: '4px', cursor: 'pointer', whiteSpace: 'nowrap',
+            }}
+          >
+            訪問
+          </button>
+          <button
+            onClick={() => handlePopoverSelect('audit')}
+            style={{
+              padding: '6px 14px', fontSize: '0.75rem', fontWeight: '600',
+              background: '#fef2f2', color: '#DC2626', border: '1px solid #fecaca',
+              borderRadius: '4px', cursor: 'pointer', whiteSpace: 'nowrap',
+            }}
+          >
+            監査
+          </button>
+        </div>
+      )}
     </div>
   );
 };
