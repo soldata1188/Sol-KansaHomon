@@ -40,21 +40,30 @@ export const TrainingTable: React.FC<TrainingTableProps> = ({
           {filteredEnterprises.map((ent, idx) => {
             const isFirstMatch = searchTerm && idx === 0;
             const isMatching = searchTerm && ent.name.toLowerCase().includes(searchTerm.toLowerCase());
+            const isTokuteiOnly = ent.acceptTypes?.length === 1 && ent.acceptTypes[0] === '特定';
+            const rowBg = isMatching ? '#fffbeb' : isTokuteiOnly ? '#F1F5F9' : 'inherit';
+            const stickyBg = isMatching ? '#fffbeb' : isTokuteiOnly ? '#F1F5F9' : 'white';
             
             const respStat = getTrainingStatus(ent.respDate);
             const instrStat = getTrainingStatus(ent.instrDate);
             const lifeStat = getTrainingStatus(ent.lifeDate);
 
             return (
-              <tr key={ent.id} ref={isFirstMatch ? scrollRef : null} style={{ borderBottom: '1px solid var(--table-border)', background: isMatching ? '#fffbeb' : 'inherit' }}>
+              <tr key={ent.id} ref={isFirstMatch ? scrollRef : null} style={{ borderBottom: '1px solid var(--table-border)', background: rowBg }}>
                 <td style={{ fontSize: '0.75rem', borderRight: '1px solid var(--table-border)', color: '#94a3b8' }}>{idx + 1}</td>
-                <td className="sticky-col" onClick={() => onEditEnterprise(ent)} style={{ textAlign: 'left', borderRight: '1px solid var(--table-border)', cursor: 'pointer', color: isMatching ? 'var(--status-amber)' : 'var(--primary)', fontWeight: 'bold', padding: '0.6rem 0.75rem', fontSize: '0.85rem', background: isMatching ? '#fffbeb' : 'white', position: 'sticky', left: 0, zIndex: 10 }}>{isMatching && '🎯 '}{ent.name}</td>
+                <td className="sticky-col" onClick={() => onEditEnterprise(ent)} style={{ textAlign: 'left', borderRight: '1px solid var(--table-border)', cursor: 'pointer', color: isMatching ? 'var(--status-amber)' : isTokuteiOnly ? '#94A3B8' : 'var(--primary)', fontWeight: 'bold', padding: '0.6rem 0.75rem', fontSize: '0.85rem', background: stickyBg, position: 'sticky', left: 0, zIndex: 10 }}>{isMatching && '🎯 '}{ent.name}</td>
                 <td style={{ borderRight: '1px solid var(--table-border)', padding: '2px', verticalAlign: 'middle' }}>
                   <div style={{ display: 'flex', flexDirection: 'row', gap: '2px', alignItems: 'center', justifyContent: 'center' }}>
                     {(ent.acceptTypes || []).map(t => {
                       const short = t === '実習' ? '実' : t === '特定' ? '特' : t === '育成' ? '育' : t[0];
+                      const colorMap: Record<string, { bg: string; border: string; color: string }> = {
+                        '実習': { bg: '#F0FDF4', border: '#86EFAC', color: '#15803D' },
+                        '特定': { bg: '#EFF6FF', border: '#93C5FD', color: '#1D4ED8' },
+                        '育成': { bg: '#F5F3FF', border: '#C4B5FD', color: '#7C3AED' },
+                      };
+                      const c = colorMap[t] || { bg: '#f8fafc', border: '#cbd5e1', color: '#475569' };
                       return (
-                        <span key={t} style={{ fontSize: '0.6rem', fontWeight: 'bold', background: '#f8fafc', border: '1px solid #cbd5e1', padding: '2px', borderRadius: '3px', color: '#475569', lineHeight: 1, width: '16px', textAlign: 'center', display: 'inline-block' }}>{short}</span>
+                        <span key={t} style={{ fontSize: '0.6rem', fontWeight: 'bold', background: c.bg, border: `1px solid ${c.border}`, padding: '2px', borderRadius: '3px', color: c.color, lineHeight: 1, width: '16px', textAlign: 'center', display: 'inline-block' }}>{short}</span>
                       );
                     })}
                   </div>

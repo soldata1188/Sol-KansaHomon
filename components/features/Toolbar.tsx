@@ -28,16 +28,42 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           <input type="text" placeholder="企業名で検索..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} style={{ width: '100%', padding: '0.4rem 0.5rem 0.4rem 1.8rem', borderRadius: '4px', border: '1px solid var(--card-border)', fontSize: '0.8rem' }} />
           <span style={{ position: 'absolute', left: '0.5rem', top: '50%', transform: 'translateY(-50%)', fontSize: '0.8rem' }}>🔍</span>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
           {viewMode === 'schedule' && [
-            {id:'all' as const,label:'すべて'},
-            {id:'audit' as const,label:'監査'},
-            {id:'visit' as const,label:'訪問'},
-            {id:'pending' as const,label:'未完'},
-            ...(filterMode === 'month' ? [{id:'month' as const,label:'月別'}] : [])
-          ].map(f => (
-            <button key={f.id} onClick={() => setFilterMode(f.id)} style={{ padding: '0.3rem 0', fontSize: '0.75rem', fontWeight: '500', cursor: 'pointer', background: 'transparent', border: 'none', color: filterMode === f.id ? 'var(--primary)' : 'var(--text-muted)', borderBottom: filterMode === f.id ? '2px solid var(--primary)' : '2px solid transparent' }}>{f.label}</button>
-          ))}
+            {id:'all' as const, label:'すべて', icon:'◉', activeColor:'#1D4ED8', activeBg:'#EFF6FF', activeBorder:'#BFDBFE'},
+            {id:'audit' as const, label:'監査', icon:'🔴', activeColor:'#DC2626', activeBg:'#FEF2F2', activeBorder:'#FECACA'},
+            {id:'visit' as const, label:'訪問', icon:'🔵', activeColor:'#1D4ED8', activeBg:'#EFF6FF', activeBorder:'#BFDBFE'},
+            {id:'pending' as const, label:'未完', icon:'⏳', activeColor:'#D97706', activeBg:'#FFFBEB', activeBorder:'#FDE68A'},
+            ...(filterMode === 'month' ? [{id:'month' as const, label:'月別', icon:'📅', activeColor:'#7C3AED', activeBg:'#F5F3FF', activeBorder:'#DDD6FE'}] : [])
+          ].map(f => {
+            const isActive = filterMode === f.id;
+            return (
+              <button 
+                key={f.id} 
+                onClick={() => setFilterMode(f.id)} 
+                style={{ 
+                  padding: '0.35rem 0.75rem', 
+                  fontSize: '0.75rem', 
+                  fontWeight: isActive ? '700' : '500', 
+                  cursor: 'pointer', 
+                  background: isActive ? f.activeBg : 'white', 
+                  border: isActive ? `1.5px solid ${f.activeBorder}` : '1px solid #E2E8F0', 
+                  borderRadius: '20px',
+                  color: isActive ? f.activeColor : '#64748B',
+                  transition: 'all 0.2s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.3rem',
+                  boxShadow: isActive ? `0 1px 4px ${f.activeBorder}80` : 'none',
+                  letterSpacing: '0.02em',
+                  whiteSpace: 'nowrap' as const,
+                }}
+              >
+                <span style={{ fontSize: '0.6rem' }}>{f.icon}</span>
+                {f.label}
+              </button>
+            );
+          })}
         </div>
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>表示: <strong>{filteredCount}</strong> / {totalCount} 社</span>
