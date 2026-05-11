@@ -115,10 +115,15 @@ export async function POST(request: NextRequest) {
       enterprises: Enterprise[];
       cache: Record<number, Record<string, ScheduleCell[]>>;
       removedCells?: { enterprise_id: string; fiscal_year: number; month: number }[];
+      currentFiscalYear?: number;
     } = await request.json();
 
     const { enterprises, cache } = body;
-    console.log('[API/sync POST] enterprises:', enterprises.length);
+    // BUG FIX 3: Determine current FY for fallback
+    const now = new Date();
+    const currentFiscalYear = body.currentFiscalYear ??
+      (now.getMonth() + 1 >= 4 ? now.getFullYear() : now.getFullYear() - 1);
+    console.log('[API/sync POST] enterprises:', enterprises.length, 'currentFY:', currentFiscalYear);
 
     // ── 1. Upsert enterprises ──────────────────────────────
     const entRows = enterprises.map(e => ({
@@ -195,33 +200,46 @@ export async function POST(request: NextRequest) {
     }
 
     // ── 3. Upsert reports (only completed cells with report data) ──
-    const reportRows: Record<string, unknown>[] = [];
+    // BUG FIX 3: Collect reports from BOTH cache AND enterprises[].schedule to ensure
+    // current-year reports are synced even if saveCurrentToCache was not called before sync.
+    const reportMap = new Map<string, Record<string, unknown>>();
 
+    const addReportRow = (entId: string, fiscal_year: number, cell: ScheduleCell) => {
+      if (cell.status === 'completed' && cell.report) {
+        const r = cell.report;
+        const key = `${entId}:${fiscal_year}:${cell.month}`;
+        reportMap.set(key, {
+          enterprise_id: entId,
+          fiscal_year,
+          month:         cell.month,
+          type:          cell.type,
+          staff:         r.staff || null,
+          report_date:   r.date || null,
+          interviewee:   r.interviewee || null,
+          check_salary:  r.checkSalary || null,
+          check_log:     r.checkLog || null,
+          v_staff:       r.vStaff || null,
+          v_date:        r.vDate || null,
+          v_interviewee: r.vInterviewee || null,
+          remarks:       r.remarks || null,
+        });
+      }
+    };
+
+    // Source 1: cache (multi-year data)
     Object.entries(cache).forEach(([yearStr, yearObj]) => {
       const fiscal_year = Number(yearStr);
       Object.entries(yearObj).forEach(([entId, cells]) => {
-        cells.forEach(cell => {
-          if (cell.status === 'completed' && cell.report) {
-            const r = cell.report;
-            reportRows.push({
-              enterprise_id: entId,
-              fiscal_year,
-              month:         cell.month,
-              type:          cell.type,
-              staff:         r.staff || null,
-              report_date:   r.date || null,
-              interviewee:   r.interviewee || null,
-              check_salary:  r.checkSalary || null,
-              check_log:     r.checkLog || null,
-              v_staff:       r.vStaff || null,
-              v_date:        r.vDate || null,
-              v_interviewee: r.vInterviewee || null,
-              remarks:       r.remarks || null,
-            });
-          }
-        });
+        cells.forEach(cell => addReportRow(entId, fiscal_year, cell));
       });
     });
+
+    // Source 2: enterprises[].schedule (current FY — may not be in cache yet)
+    enterprises.forEach(ent => {
+      ent.schedule.forEach(cell => addReportRow(ent.id, currentFiscalYear, cell));
+    });
+
+    const reportRows = Array.from(reportMap.values());
 
     if (reportRows.length > 0) {
       const { error: repErr } = await supabase
