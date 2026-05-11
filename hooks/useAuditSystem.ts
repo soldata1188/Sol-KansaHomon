@@ -23,10 +23,9 @@ export function useAuditSystem() {
   const [tempReport, setTempReport] = useState<Report>(EMPTY_REPORT);
   
   const cacheRef = useRef<Record<number, Record<string, ScheduleCell[]>>>({});
-  // BUG FIX 1 & 5: Store latest enterprises in a ref so syncToCloud never reads stale closure
+  // Always store latest enterprises so syncToCloud() without args reads fresh data
   const enterprisesRef = useRef<Enterprise[]>([]);
   const [isInitialLoadDone, setIsInitialLoadDone] = useState(false);
-  const isSyncingRef = useRef(false);
   const [isSyncing, setIsSyncing] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -79,16 +78,15 @@ export function useAuditSystem() {
   }, []);
 
   const syncToCloud = useCallback(async (overrideEnts?: Enterprise[], removedCells?: { enterprise_id: string; fiscal_year: number; month: number }[]) => {
-    // BUG FIX 1 & 5: Always read from ref to get latest enterprises, never from stale closure
+    // Always read from ref so we never use a stale closure value
     const data = overrideEnts || enterprisesRef.current;
     if (data.length === 0) return;
-    // Prevent concurrent syncs
-    if (isSyncingRef.current) return;
-    isSyncingRef.current = true;
+    // NOTE: No concurrent-sync guard — Supabase upserts are idempotent.
+    // A guard here would silently block user-triggered saves when an auto-sync
+    // is in flight, causing data loss on page refresh.
     setIsSyncing(true);
 
     try {
-      // Build a flat reports array for easy GAS processing
       const reports = data.flatMap(ent =>
         ent.schedule
           .filter(c => c.status === 'completed' && c.report)
@@ -109,7 +107,6 @@ export function useAuditSystem() {
           }))
       );
 
-      // BUG FIX 3: Send currentFiscalYear so the API knows which FY enterprises[].schedule belongs to
       const now = new Date();
       const currentFiscalYear = now.getMonth() + 1 >= 4 ? now.getFullYear() : now.getFullYear() - 1;
       const payload = {
@@ -129,15 +126,16 @@ export function useAuditSystem() {
 
       if (response.ok) {
         console.log('✅ 同期完了');
+      } else {
+        console.error('❌ 同期失敗 status:', response.status);
       }
     } catch (e) {
       console.error('❌ 同期エラー:', e);
     } finally {
-      isSyncingRef.current = false;
-      setTimeout(() => setIsSyncing(false), 1000);
+      setTimeout(() => setIsSyncing(false), 800);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // No dependency on enterprises — reads from ref instead
+  }, []); // stable — reads enterprises from ref, not closure
 
   useEffect(() => {
     const safeGetSession = (key: string): string | null => {
@@ -199,10 +197,9 @@ export function useAuditSystem() {
           return a.name.localeCompare(b.name, 'ja');
         });
         const withSchedule = loadScheduleWithReports(currentFY, sorted);
-        enterprisesRef.current = withSchedule; // BUG FIX 1: keep ref in sync
+        enterprisesRef.current = withSchedule;
         setEnterprises(withSchedule);
       }
-      isSyncingRef.current = false;
       setIsSyncing(false);
       setIsInitialLoadDone(true);
     };
@@ -288,28 +285,28 @@ export function useAuditSystem() {
       return;
     }
 
-    setEnterprises(prev => {
-      let next;
-      if (!targetEnt.id) {
-        const fullNewEnt = { ...targetEnt, id: 'ENT' + Date.now(), name: trimmed, schedule: calculateSchedule() };
-        next = [...prev, fullNewEnt];
-      } else {
-        next = prev.map(e => (e.id === targetEnt.id ? { ...e, ...targetEnt, name: trimmed, schedule: e.schedule } : e));
-      }
-      const sorted = next.sort((a, b) => {
-        if (!a.entryDateJisshu1 && !b.entryDateJisshu1) return a.name.localeCompare(b.name, 'ja');
-        if (!a.entryDateJisshu1) return 1;
-        if (!b.entryDateJisshu1) return -1;
-        const dateCompare = b.entryDateJisshu1.localeCompare(a.entryDateJisshu1);
-        if (dateCompare !== 0) return dateCompare;
-        return a.name.localeCompare(b.name, 'ja');
-      });
-      // BUG FIX 3: Update ref immediately so syncToCloud has latest data
-      enterprisesRef.current = sorted;
-      setTimeout(() => syncToCloud(sorted), 0);
-      return sorted;
+    // Compute sorted list outside of setEnterprises to avoid side-effects in updater
+    const current = enterprises;
+    let next: Enterprise[];
+    if (!targetEnt.id) {
+      const fullNewEnt = { ...targetEnt, id: 'ENT' + Date.now(), name: trimmed, schedule: calculateSchedule() };
+      next = [...current, fullNewEnt];
+    } else {
+      next = current.map(e => (e.id === targetEnt.id ? { ...e, ...targetEnt, name: trimmed, schedule: e.schedule } : e));
+    }
+    const sorted = next.sort((a, b) => {
+      if (!a.entryDateJisshu1 && !b.entryDateJisshu1) return a.name.localeCompare(b.name, 'ja');
+      if (!a.entryDateJisshu1) return 1;
+      if (!b.entryDateJisshu1) return -1;
+      const dateCompare = b.entryDateJisshu1.localeCompare(a.entryDateJisshu1);
+      if (dateCompare !== 0) return dateCompare;
+      return a.name.localeCompare(b.name, 'ja');
     });
+    enterprisesRef.current = sorted;
+    setEnterprises(sorted);
     setModalMode('none');
+    // Sync immediately with explicit data — do NOT rely on 2s debounce
+    syncToCloud(sorted);
   };
 
   const handleDeleteEnterprise = (ent: Enterprise) => {
@@ -318,79 +315,72 @@ export function useAuditSystem() {
     Object.keys(newCache).forEach(year => { if (newCache[Number(year)]) delete newCache[Number(year)][ent.id]; });
     cacheRef.current = newCache;
     const updatedEnts = enterprises.filter(e => e.id !== ent.id);
-    // BUG FIX 3: Update ref immediately
     enterprisesRef.current = updatedEnts;
     setEnterprises(updatedEnts);
     setModalMode('none');
+    // Delete from DB directly, then sync the updated enterprise list
     fetch('/api/delete-enterprise', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: ent.id }) }).catch(() => {});
-    setTimeout(() => syncToCloud(updatedEnts), 0);
+    syncToCloud(updatedEnts);
   };
 
   const handleSaveReport = () => {
     if (!selectedCell) return;
-    // BUG FIX 2: For 'audit' tasks, completed when either audit date (date) or visit date (vDate) is filled.
-    // For 'visit' tasks, completed when visit date (date) is filled.
+    // For 'audit' tasks, completed when either audit date or visit date is filled.
+    // For 'visit' tasks, completed when visit date is filled.
     const isActuallyCompleted = selectedCell.type === 'audit'
       ? (!!tempReport.date || !!tempReport.vDate)
       : !!tempReport.date;
     const newStatus: StatusType = isActuallyCompleted ? 'completed' : 'pending';
 
-    setEnterprises(prev => {
-      const updated = prev.map(ent => {
-        if (ent.id !== selectedCell.entId) return ent;
-        return { ...ent, schedule: ent.schedule.map(c => c.month === selectedCell.month ? { ...c, status: newStatus, report: tempReport } : c) };
-      });
-      saveCurrentToCache(fiscalYear, updated);
-      // BUG FIX 3: Update ref immediately
-      enterprisesRef.current = updated;
-      setTimeout(() => syncToCloud(updated), 0);
-      return updated;
+    // Compute updated list outside state updater to avoid side-effects
+    const updated = enterprises.map(ent => {
+      if (ent.id !== selectedCell.entId) return ent;
+      return { ...ent, schedule: ent.schedule.map(c => c.month === selectedCell.month ? { ...c, status: newStatus, report: tempReport } : c) };
     });
+    saveCurrentToCache(fiscalYear, updated);
+    enterprisesRef.current = updated;
+    setEnterprises(updated);
     setModalMode('none');
+    // Sync immediately — do NOT rely on 2s debounce
+    syncToCloud(updated);
   };
 
   const handleSetType = (newType: TaskType) => {
     if (!selectedCell) return;
-    setEnterprises(prev => {
-      const updated = prev.map(ent => {
-        if (ent.id !== selectedCell.entId) return ent;
-        return { ...ent, schedule: ent.schedule.map(c => c.month === selectedCell.month ? { ...c, type: newType, status: 'pending' as StatusType, report: undefined } : c) };
-      });
-      saveCurrentToCache(fiscalYear, updated);
-      enterprisesRef.current = updated;
-      setTimeout(() => syncToCloud(updated), 0);
-      return updated;
+    const updated = enterprises.map(ent => {
+      if (ent.id !== selectedCell.entId) return ent;
+      return { ...ent, schedule: ent.schedule.map(c => c.month === selectedCell.month ? { ...c, type: newType, status: 'pending' as StatusType, report: undefined } : c) };
     });
+    saveCurrentToCache(fiscalYear, updated);
+    enterprisesRef.current = updated;
+    setEnterprises(updated);
     setModalMode('none');
+    syncToCloud(updated);
   };
 
   const handleSetTypeDirect = (entId: string, month: number, newType: TaskType) => {
-    setEnterprises(prev => {
-      const updated = prev.map(ent => {
-        if (ent.id !== entId) return ent;
-        return { ...ent, schedule: ent.schedule.map(c => c.month === month ? { ...c, type: newType, status: 'pending' as StatusType, report: undefined } : c) };
-      });
-      saveCurrentToCache(fiscalYear, updated);
-      enterprisesRef.current = updated;
-      setTimeout(() => syncToCloud(updated), 0);
-      return updated;
+    const updated = enterprises.map(ent => {
+      if (ent.id !== entId) return ent;
+      return { ...ent, schedule: ent.schedule.map(c => c.month === month ? { ...c, type: newType, status: 'pending' as StatusType, report: undefined } : c) };
     });
+    saveCurrentToCache(fiscalYear, updated);
+    enterprisesRef.current = updated;
+    setEnterprises(updated);
+    syncToCloud(updated);
   };
 
   const handleRemoveSchedule = () => {
     if (!selectedCell || !confirm('解除しますか？')) return;
     const cellToRemove = { enterprise_id: selectedCell.entId, fiscal_year: fiscalYear, month: selectedCell.month };
-    setEnterprises(prev => {
-      const updated = prev.map(ent => {
-        if (ent.id !== selectedCell.entId) return ent;
-        return { ...ent, schedule: ent.schedule.map(c => c.month === selectedCell.month ? { ...c, type: 'none' as TaskType, status: 'pending' as StatusType, report: undefined } : c) };
-      });
-      saveCurrentToCache(fiscalYear, updated);
-      enterprisesRef.current = updated;
-      setTimeout(() => syncToCloud(updated, [cellToRemove]), 0);
-      return updated;
+    const updated = enterprises.map(ent => {
+      if (ent.id !== selectedCell.entId) return ent;
+      return { ...ent, schedule: ent.schedule.map(c => c.month === selectedCell.month ? { ...c, type: 'none' as TaskType, status: 'pending' as StatusType, report: undefined } : c) };
     });
+    saveCurrentToCache(fiscalYear, updated);
+    enterprisesRef.current = updated;
+    setEnterprises(updated);
     setModalMode('none');
+    syncToCloud(updated, [cellToRemove]);
   };
 
   const openChecklist = (ent: Enterprise, month: number, type: TaskType) => {
