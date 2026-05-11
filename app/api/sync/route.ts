@@ -199,13 +199,18 @@ export async function POST(request: NextRequest) {
         .eq('month', rc.month);
     }
 
-    // ── 3. Upsert reports (only completed cells with report data) ──
-    // BUG FIX 3: Collect reports from BOTH cache AND enterprises[].schedule to ensure
-    // current-year reports are synced even if saveCurrentToCache was not called before sync.
+    // ── 3. Upsert reports (any cell with report data, not just completed) ──
+    // FIX: Save report whenever ANY field has content — including staff-only entries
+    // without a date. Previously only 'completed' cells were saved, causing data loss
+    // when users entered 担当者 but not 実施日.
     const reportMap = new Map<string, Record<string, unknown>>();
 
+    const hasReportData = (r: Report): boolean =>
+      !!(r.staff || r.date || r.interviewee || r.vStaff || r.vDate || r.vInterviewee || r.remarks ||
+         (r.checkSalary && r.checkSalary !== 'none') || (r.checkLog && r.checkLog !== 'none'));
+
     const addReportRow = (entId: string, fiscal_year: number, cell: ScheduleCell) => {
-      if (cell.status === 'completed' && cell.report) {
+      if (cell.report && hasReportData(cell.report)) {
         const r = cell.report;
         const key = `${entId}:${fiscal_year}:${cell.month}`;
         reportMap.set(key, {
