@@ -80,29 +80,35 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
       bgColor = isAudit ? 'var(--status-red-bg)' : 'var(--primary-light)';
     }
 
+    const typeLabel = isAudit ? '監' : '訪';
+    const staffName = cell.report?.staff || '';
+    const dateStr = cell.report?.date ? formatShortDate(cell.report.date) : '';
+
+    // Build single-line display: TYPE・STAFF(DATE)
+    let displayText = typeLabel;
+    if (staffName && dateStr) {
+      displayText = `${typeLabel}・${staffName}(${dateStr})`;
+    } else if (staffName) {
+      displayText = `${typeLabel}・${staffName}`;
+    } else if (dateStr) {
+      displayText = `${typeLabel}(${dateStr})`;
+    }
+
     return (
       <div 
         onClick={() => openChecklist(ent, cell.month, cell.type)}
         style={{ 
-          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
           cursor: 'pointer', padding: '4px 2px', height: '100%',
-          background: bgColor
+          background: bgColor, gap: '4px'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          {isToday && (
-            <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--status-red)', flexShrink: 0 }} />
-          )}
-          <span style={{ fontSize: '0.7rem', fontWeight: '500', color: labelColor, letterSpacing: '0.02em' }}>
-            {isAudit ? '監' : '訪'}
-          </span>
-        </div>
-        {cell.report && (
-          <div style={{ fontSize: '0.6rem', color: '#94A3B8', lineHeight: 1, marginTop: '2px', display: 'flex', gap: '3px', whiteSpace: 'nowrap' }}>
-            {cell.report.date && <span>{formatShortDate(cell.report.date)}</span>}
-            {cell.report.staff && <span style={{ color: isCompleted ? '#64748B' : '#94A3B8', fontWeight: '500' }}>{cell.report.staff}</span>}
-          </div>
+        {isToday && (
+          <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--status-red)', flexShrink: 0 }} />
         )}
+        <span style={{ fontSize: '0.6rem', fontWeight: '500', color: labelColor, letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>
+          {displayText}
+        </span>
       </div>
     );
   };
