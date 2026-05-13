@@ -34,15 +34,15 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         <span style={{ position: 'absolute', left: '0.4rem', top: '50%', transform: 'translateY(-50%)', fontSize: '0.7rem' }}>🔍</span>
       </div>
 
-      {/* Filter buttons */}
+      {/* Filter toggles */}
       {viewMode === 'schedule' && (
-        <div className="filter-bar" style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
+        <div className="filter-bar" style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
           {[
-            {id:'all' as const, label:'すべて', icon:'◉', activeColor:'#1D4ED8', activeBg:'#EFF6FF', activeBorder:'#BFDBFE'},
-            {id:'audit' as const, label:'監査', icon:'🔴', activeColor:'#DC2626', activeBg:'#FEF2F2', activeBorder:'#FECACA'},
-            {id:'visit' as const, label:'訪問', icon:'🔵', activeColor:'#1D4ED8', activeBg:'#EFF6FF', activeBorder:'#BFDBFE'},
-            {id:'pending' as const, label:'未完', icon:'⏳', activeColor:'#D97706', activeBg:'#FFFBEB', activeBorder:'#FDE68A'},
-            ...(filterMode === 'month' ? [{id:'month' as const, label:'月別', icon:'📅', activeColor:'#7C3AED', activeBg:'#F5F3FF', activeBorder:'#DDD6FE'}] : [])
+            {id:'all' as const, label:'すべて', activeColor:'#1D4ED8'},
+            {id:'audit' as const, label:'監査', activeColor:'#DC2626'},
+            {id:'visit' as const, label:'訪問', activeColor:'#1D4ED8'},
+            {id:'pending' as const, label:'未完', activeColor:'#D97706'},
+            ...(filterMode === 'month' ? [{id:'month' as const, label:'月別', activeColor:'#7C3AED'}] : [])
           ].map(f => {
             const isActive = filterMode === f.id;
             return (
@@ -50,23 +50,36 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 key={f.id} 
                 onClick={() => setFilterMode(f.id)} 
                 style={{ 
-                  padding: '0.25rem 0.5rem', 
-                  fontSize: '0.7rem', 
-                  fontWeight: isActive ? '700' : '500', 
+                  display: 'flex', alignItems: 'center', gap: '0.3rem',
+                  padding: '0.15rem 0.3rem', 
+                  fontSize: '0.68rem', fontWeight: '500',
                   cursor: 'pointer', 
-                  background: isActive ? f.activeBg : 'white', 
-                  border: isActive ? `1.5px solid ${f.activeBorder}` : '1px solid #E2E8F0', 
-                  borderRadius: '20px',
-                  color: isActive ? f.activeColor : '#64748B',
+                  background: 'transparent', 
+                  border: 'none',
+                  color: isActive ? f.activeColor : '#94A3B8',
                   transition: 'all 0.2s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.2rem',
-                  boxShadow: isActive ? `0 1px 4px ${f.activeBorder}80` : 'none',
                   whiteSpace: 'nowrap' as const,
                 }}
               >
-                <span style={{ fontSize: '0.55rem' }}>{f.icon}</span>
+                <span style={{
+                  display: 'inline-flex', alignItems: 'center',
+                  width: '24px', height: '14px',
+                  borderRadius: '7px',
+                  background: isActive ? f.activeColor : '#CBD5E1',
+                  position: 'relative',
+                  transition: 'background 0.2s ease',
+                  flexShrink: 0,
+                }}>
+                  <span style={{
+                    width: '10px', height: '10px',
+                    borderRadius: '50%',
+                    background: 'white',
+                    position: 'absolute',
+                    left: isActive ? '12px' : '2px',
+                    transition: 'left 0.2s ease',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.15)',
+                  }} />
+                </span>
                 {f.label}
               </button>
             );
