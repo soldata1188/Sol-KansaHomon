@@ -55,7 +55,6 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
   };
 
   const renderCellContent = (cell: ScheduleCell, ent: Enterprise) => {
-    const isToday = cell.month === realMonth && fiscalYear === realFiscalYear;
     if (cell.type === 'none') {
       return (
         <div 
@@ -71,20 +70,12 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
     const isAudit = cell.type === 'audit';
 
     const baseColor = isAudit ? 'var(--status-red)' : 'var(--primary)';
-    const labelColor = isCompleted ? '#64748B' : baseColor;
-    
-    let bgColor = 'transparent';
-    if (hasReport) {
-      bgColor = isAudit ? '#fee2e2' : '#dbeafe';
-    } else if (isCompleted) {
-      bgColor = isAudit ? 'var(--status-red-bg)' : 'var(--primary-light)';
-    }
 
     const typeLabel = isAudit ? '監' : '訪';
     const staffName = cell.report?.staff || '';
     const dateStr = cell.report?.date ? formatShortDate(cell.report.date) : '';
 
-    // Build single-line display: TYPE・STAFF(DATE)
+    // Build single-line display: ✅TYPE・STAFF(DATE)
     let displayText = typeLabel;
     if (staffName && dateStr) {
       displayText = `${typeLabel}・${staffName}(${dateStr})`;
@@ -98,15 +89,15 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
       <div 
         onClick={() => openChecklist(ent, cell.month, cell.type)}
         style={{ 
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          display: 'flex', alignItems: 'center', justifyContent: 'flex-start',
           cursor: 'pointer', padding: '3px 2px', height: '100%',
-          background: bgColor, gap: '3px'
+          gap: '3px'
         }}
       >
-        {isToday && (
-          <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--status-red)', flexShrink: 0 }} />
+        {isCompleted && (
+          <span style={{ fontSize: '0.6rem', flexShrink: 0 }}>✅</span>
         )}
-        <span style={{ fontSize: '0.6rem', fontWeight: '500', color: labelColor, letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>
+        <span style={{ fontSize: '0.6rem', fontWeight: '500', color: baseColor, letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>
           {displayText}
         </span>
       </div>
@@ -174,10 +165,10 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
             const stickyBg = isMatching ? '#fffbeb' : isTokuteiOnly ? '#F1F5F9' : 'white';
             return (
               <tr key={ent.id} ref={isFirstMatch ? scrollRef : null} style={{ borderBottom: '1px solid var(--card-border)', background: rowBg }}>
-                <td style={{ fontSize: '0.7rem', borderRight: '1px solid var(--card-border)', color: '#94a3b8' }}>{idx + 1}</td>
-                <td className="sticky-col" onClick={() => onEditEnterprise(ent)} style={{ textAlign: 'left', borderRight: '1px solid var(--card-border)', cursor: 'pointer', color: isMatching ? 'var(--status-amber)' : isTokuteiOnly ? '#94A3B8' : 'var(--primary)', fontWeight: 'bold', padding: '0.3rem 0.5rem', fontSize: '0.8rem', background: stickyBg, position: 'sticky', left: 0, zIndex: 10 }}>{isMatching && '🎯 '}{ent.name}</td>
+                <td style={{ fontSize: '0.7rem', borderRight: '1px solid var(--card-border)', color: '#94a3b8', textAlign: 'center' }}>{idx + 1}</td>
+                <td className="sticky-col" onClick={() => onEditEnterprise(ent)} style={{ textAlign: 'left', borderRight: '1px solid var(--card-border)', cursor: 'pointer', color: isMatching ? 'var(--status-amber)' : isTokuteiOnly ? '#94A3B8' : 'var(--foreground)', fontWeight: 'bold', padding: '0.3rem 0.5rem', fontSize: '0.8rem', background: stickyBg, position: 'sticky', left: 0, zIndex: 10 }}>{isMatching && '🎯 '}{ent.name}</td>
                 <td style={{ borderRight: '1px solid var(--card-border)', padding: '2px', verticalAlign: 'middle' }}>
-                  <div style={{ display: 'flex', flexDirection: 'row', gap: '2px', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ display: 'flex', flexDirection: 'row', gap: '2px', alignItems: 'center', justifyContent: 'flex-start' }}>
                     {(ent.acceptTypes || []).map(t => {
                       const short = t === '実習' ? '実' : t === '特定' ? '特' : t === '育成' ? '育' : t[0];
                       const colorMap: Record<string, { bg: string; border: string; color: string }> = {
@@ -192,14 +183,17 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
                     })}
                   </div>
                 </td>
-                <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.8rem' }}>{ent.countTokutei + ent.countJisshu23}</td>
-                <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.8rem' }}>{ent.countJisshu1}</td>
-                <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.7rem' }}>{ent.entryDateJisshu1 || '-'}</td>
-                {ent.schedule.map((cell, sIdx) => (
-                  <td key={sIdx} style={{ borderRight: '1px solid var(--card-border)', padding: '2px', background: 'inherit' }}>
-                    {renderCellContent(cell, ent)}
-                  </td>
-                ))}
+                <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.8rem', textAlign: 'center' }}>{ent.countTokutei + ent.countJisshu23}</td>
+                <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.8rem', textAlign: 'center' }}>{ent.countJisshu1}</td>
+                <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.7rem', textAlign: 'left' }}>{ent.entryDateJisshu1 || '-'}</td>
+                {ent.schedule.map((cell, sIdx) => {
+                  const isTodayCol = cell.month === realMonth && fiscalYear === realFiscalYear;
+                  return (
+                    <td key={sIdx} style={{ borderRight: '1px solid var(--card-border)', padding: '2px', background: isTodayCol ? '#EFF6FF' : 'inherit' }}>
+                      {renderCellContent(cell, ent)}
+                    </td>
+                  );
+                })}
               </tr>
             );
           })}

@@ -408,6 +408,12 @@ export function useAuditSystem() {
   });
 
   const sortedAndFilteredEnterprises = [...filteredEnterprises].sort((a, b) => {
+    // Always push tokutei-only enterprises to the bottom
+    const aIsTokuteiOnly = a.acceptTypes?.length === 1 && a.acceptTypes[0] === '特定';
+    const bIsTokuteiOnly = b.acceptTypes?.length === 1 && b.acceptTypes[0] === '特定';
+    if (aIsTokuteiOnly && !bIsTokuteiOnly) return 1;
+    if (!aIsTokuteiOnly && bIsTokuteiOnly) return -1;
+
     let cmp = 0;
     if (sortColumn === 'name') {
       cmp = a.name.localeCompare(b.name, 'ja');
@@ -423,8 +429,8 @@ export function useAuditSystem() {
       cmp = a.countJisshu1 - b.countJisshu1;
     } else if (sortColumn === 'entryDateJisshu1') {
       if (!a.entryDateJisshu1 && !b.entryDateJisshu1) cmp = 0;
-      else if (!a.entryDateJisshu1) return 1; // Always force empty dates to bottom
-      else if (!b.entryDateJisshu1) return -1; // Always force empty dates to bottom
+      else if (!a.entryDateJisshu1) cmp = 1;
+      else if (!b.entryDateJisshu1) cmp = -1;
       else cmp = a.entryDateJisshu1.localeCompare(b.entryDateJisshu1);
     }
     
