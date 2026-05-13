@@ -99,8 +99,8 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
         onClick={() => openChecklist(ent, cell.month, cell.type)}
         style={{ 
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer', padding: '4px 2px', height: '100%',
-          background: bgColor, gap: '4px'
+          cursor: 'pointer', padding: '1px 2px', height: '100%',
+          background: bgColor, gap: '3px'
         }}
       >
         {isToday && (
@@ -118,7 +118,7 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center', minWidth: '1300px' }}>
         <thead style={{ background: '#f8fafc', position: 'sticky', top: 0, zIndex: 30 }}>
           <tr>
-            <th style={{ textAlign: 'center', width: '30px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0', fontSize: '0.7rem' }}>No</th>
+            <th style={{ textAlign: 'center', width: '30px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.1rem 0', fontSize: '0.7rem' }}>No</th>
             <th className="sticky-col" onClick={() => onSort?.('name')} style={{ cursor: 'pointer', textAlign: 'center', width: '160px', borderRight: '1px solid var(--table-border)', borderBottom: '1px solid var(--table-border)', padding: '0.2rem 0.5rem', fontSize: '0.8rem', background: '#f8fafc' }}>
               企業名 {sortColumn === 'name' && (sortDirection === 'asc' ? '▲' : '▼')}
             </th>
@@ -152,7 +152,7 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
                     fontWeight: isTodayMonth ? '600' : '500',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
-                    padding: '0.2rem 0'
+                    padding: '0.1rem 0'
                   }}
                 >
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', lineHeight: 1.1 }}>
@@ -175,7 +175,7 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
             return (
               <tr key={ent.id} ref={isFirstMatch ? scrollRef : null} style={{ borderBottom: '1px solid var(--card-border)', background: rowBg }}>
                 <td style={{ fontSize: '0.7rem', borderRight: '1px solid var(--card-border)', color: '#94a3b8' }}>{idx + 1}</td>
-                <td className="sticky-col" onClick={() => onEditEnterprise(ent)} style={{ textAlign: 'left', borderRight: '1px solid var(--card-border)', cursor: 'pointer', color: isMatching ? 'var(--status-amber)' : isTokuteiOnly ? '#94A3B8' : 'var(--primary)', fontWeight: 'bold', padding: '0.5rem 0.75rem', fontSize: '0.8rem', background: stickyBg, position: 'sticky', left: 0, zIndex: 10 }}>{isMatching && '🎯 '}{ent.name}</td>
+                <td className="sticky-col" onClick={() => onEditEnterprise(ent)} style={{ textAlign: 'left', borderRight: '1px solid var(--card-border)', cursor: 'pointer', color: isMatching ? 'var(--status-amber)' : isTokuteiOnly ? '#94A3B8' : 'var(--primary)', fontWeight: 'bold', padding: '0.15rem 0.5rem', fontSize: '0.8rem', background: stickyBg, position: 'sticky', left: 0, zIndex: 10 }}>{isMatching && '🎯 '}{ent.name}</td>
                 <td style={{ borderRight: '1px solid var(--card-border)', padding: '2px', verticalAlign: 'middle' }}>
                   <div style={{ display: 'flex', flexDirection: 'row', gap: '2px', alignItems: 'center', justifyContent: 'center' }}>
                     {(ent.acceptTypes || []).map(t => {
@@ -196,7 +196,7 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
                 <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.8rem' }}>{ent.countJisshu1}</td>
                 <td style={{ borderRight: '1px solid var(--card-border)', fontSize: '0.7rem' }}>{ent.entryDateJisshu1 || '-'}</td>
                 {ent.schedule.map((cell, sIdx) => (
-                  <td key={sIdx} style={{ borderRight: '1px solid var(--card-border)', padding: '2px', background: 'inherit' }}>
+                  <td key={sIdx} style={{ borderRight: '1px solid var(--card-border)', padding: '1px', background: 'inherit' }}>
                     {renderCellContent(cell, ent)}
                   </td>
                 ))}
