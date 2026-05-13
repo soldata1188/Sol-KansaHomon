@@ -90,26 +90,48 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       {/* Right side: count + fiscal year + refresh */}
       <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>表示: <strong>{filteredCount}</strong> / {totalCount} 社</span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.15rem', background: 'var(--card-bg)', padding: '0.15rem', borderRadius: 'var(--radius)', border: '1px solid var(--card-border)' }}>
-          {[2025, 2026, 2027, 2028, 2029, 2030].map(year => (
-            <button 
-              key={year} 
-              onClick={() => changeFiscalYear(year)} 
-              style={{ 
-                padding: '0.2rem 0.5rem', 
-                fontSize: '0.7rem', 
-                fontWeight: fiscalYear === year ? '600' : '500', 
-                cursor: 'pointer', 
-                background: fiscalYear === year ? 'var(--primary)' : 'transparent', 
-                color: fiscalYear === year ? 'white' : 'var(--text-main)', 
-                border: 'none', 
-                borderRadius: 'calc(var(--radius) - 2px)',
-                transition: 'all 0.2s'
-              }}
-            >
-              {year}年度
-            </button>
-          ))}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+          {[2025, 2026, 2027, 2028, 2029, 2030].map(year => {
+            const isActive = fiscalYear === year;
+            return (
+              <button 
+                key={year} 
+                onClick={() => changeFiscalYear(year)} 
+                style={{ 
+                  display: 'flex', alignItems: 'center', gap: '0.25rem',
+                  padding: '0.15rem 0.2rem',
+                  fontSize: '0.68rem', fontWeight: '500',
+                  cursor: 'pointer', 
+                  background: 'transparent',
+                  border: 'none',
+                  color: isActive ? 'var(--primary)' : '#94A3B8',
+                  transition: 'all 0.2s ease',
+                  whiteSpace: 'nowrap' as const,
+                }}
+              >
+                <span style={{
+                  display: 'inline-flex', alignItems: 'center',
+                  width: '24px', height: '14px',
+                  borderRadius: '7px',
+                  background: isActive ? 'var(--primary)' : '#CBD5E1',
+                  position: 'relative',
+                  transition: 'background 0.2s ease',
+                  flexShrink: 0,
+                }}>
+                  <span style={{
+                    width: '10px', height: '10px',
+                    borderRadius: '50%',
+                    background: 'white',
+                    position: 'absolute',
+                    left: isActive ? '12px' : '2px',
+                    transition: 'left 0.2s ease',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.15)',
+                  }} />
+                </span>
+                {year}
+              </button>
+            );
+          })}
         </div>
         <button 
           onClick={onRefresh} 
