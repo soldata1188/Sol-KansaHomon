@@ -428,9 +428,10 @@ export function useAuditSystem() {
     } else if (sortColumn === 'countJisshu1') {
       cmp = a.countJisshu1 - b.countJisshu1;
     } else if (sortColumn === 'entryDateJisshu1') {
+      // Empty dates always go to bottom regardless of sort direction
       if (!a.entryDateJisshu1 && !b.entryDateJisshu1) cmp = 0;
-      else if (!a.entryDateJisshu1) cmp = 1;
-      else if (!b.entryDateJisshu1) cmp = -1;
+      else if (!a.entryDateJisshu1) return 1;
+      else if (!b.entryDateJisshu1) return -1;
       else cmp = a.entryDateJisshu1.localeCompare(b.entryDateJisshu1);
     }
     
