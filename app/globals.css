@@ -141,20 +141,17 @@ table thead th {
   text-align: left;
   border-bottom: 2px solid var(--table-border); /* Thicker header bottom border */
   border-right: 1px solid var(--table-border);
-  padding: 0.3rem 0.5rem;
+  padding: 0.35rem 0.5rem;
   white-space: nowrap;
+  line-height: 1.3;
 }
 
 table tbody td {
   border-bottom: 1px solid var(--table-border);
   border-right: 1px solid var(--table-border);
-  padding: 0.15rem 0.4rem;
+  padding: 0.3rem 0.4rem;
   color: var(--text-main);
-  line-height: 1.2;
-}
-
-table thead th {
-  line-height: 1.2;
+  line-height: 1.3;
 }
 
 /* Zebra Striping */
