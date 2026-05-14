@@ -349,7 +349,7 @@ export function useAuditSystem() {
     if (!selectedCell) return;
     const updated = enterprises.map(ent => {
       if (ent.id !== selectedCell.entId) return ent;
-      return { ...ent, schedule: ent.schedule.map(c => c.month === selectedCell.month ? { ...c, type: newType, status: 'pending' as StatusType, report: undefined } : c) };
+      return { ...ent, schedule: ent.schedule.map(c => c.month === selectedCell.month ? { ...c, type: newType, status: 'pending' as StatusType, report: { ...EMPTY_REPORT } } : c) };
     });
     saveCurrentToCache(fiscalYear, updated);
     enterprisesRef.current = updated;
@@ -361,7 +361,7 @@ export function useAuditSystem() {
   const handleSetTypeDirect = (entId: string, month: number, newType: TaskType) => {
     const updated = enterprises.map(ent => {
       if (ent.id !== entId) return ent;
-      return { ...ent, schedule: ent.schedule.map(c => c.month === month ? { ...c, type: newType, status: 'pending' as StatusType, report: undefined } : c) };
+      return { ...ent, schedule: ent.schedule.map(c => c.month === month ? { ...c, type: newType, status: 'pending' as StatusType, report: { ...EMPTY_REPORT } } : c) };
     });
     saveCurrentToCache(fiscalYear, updated);
     enterprisesRef.current = updated;
@@ -374,7 +374,7 @@ export function useAuditSystem() {
     const cellToRemove = { enterprise_id: selectedCell.entId, fiscal_year: fiscalYear, month: selectedCell.month };
     const updated = enterprises.map(ent => {
       if (ent.id !== selectedCell.entId) return ent;
-      return { ...ent, schedule: ent.schedule.map(c => c.month === selectedCell.month ? { ...c, type: 'none' as TaskType, status: 'pending' as StatusType, report: undefined } : c) };
+      return { ...ent, schedule: ent.schedule.map(c => c.month === selectedCell.month ? { ...c, type: 'none' as TaskType, status: 'pending' as StatusType, report: { ...EMPTY_REPORT } } : c) };
     });
     saveCurrentToCache(fiscalYear, updated);
     enterprisesRef.current = updated;

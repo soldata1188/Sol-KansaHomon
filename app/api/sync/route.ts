@@ -197,6 +197,13 @@ export async function POST(request: NextRequest) {
         .eq('enterprise_id', rc.enterprise_id)
         .eq('fiscal_year', rc.fiscal_year)
         .eq('month', rc.month);
+
+      await supabase
+        .from('reports')
+        .delete()
+        .eq('enterprise_id', rc.enterprise_id)
+        .eq('fiscal_year', rc.fiscal_year)
+        .eq('month', rc.month);
     }
 
     // ── 3. Upsert reports (any cell with report data, not just completed) ──
@@ -210,24 +217,44 @@ export async function POST(request: NextRequest) {
          (r.checkSalary && r.checkSalary !== 'none') || (r.checkLog && r.checkLog !== 'none'));
 
     const addReportRow = (entId: string, fiscal_year: number, cell: ScheduleCell) => {
-      if (cell.report && hasReportData(cell.report)) {
+      if (cell.report) {
         const r = cell.report;
         const key = `${entId}:${fiscal_year}:${cell.month}`;
-        reportMap.set(key, {
-          enterprise_id: entId,
-          fiscal_year,
-          month:         cell.month,
-          type:          cell.type,
-          staff:         r.staff || null,
-          report_date:   r.date || null,
-          interviewee:   r.interviewee || null,
-          check_salary:  r.checkSalary || null,
-          check_log:     r.checkLog || null,
-          v_staff:       r.vStaff || null,
-          v_date:        r.vDate || null,
-          v_interviewee: r.vInterviewee || null,
-          remarks:       r.remarks || null,
-        });
+        
+        if (hasReportData(r)) {
+          reportMap.set(key, {
+            enterprise_id: entId,
+            fiscal_year,
+            month:         cell.month,
+            type:          cell.type,
+            staff:         r.staff || null,
+            report_date:   r.date || null,
+            interviewee:   r.interviewee || null,
+            check_salary:  r.checkSalary || null,
+            check_log:     r.checkLog || null,
+            v_staff:       r.vStaff || null,
+            v_date:        r.vDate || null,
+            v_interviewee: r.vInterviewee || null,
+            remarks:       r.remarks || null,
+          });
+        } else {
+          // User explicitly cleared the report
+          reportMap.set(key, {
+            enterprise_id: entId,
+            fiscal_year,
+            month:         cell.month,
+            type:          cell.type,
+            staff:         null,
+            report_date:   null,
+            interviewee:   null,
+            check_salary:  null,
+            check_log:     null,
+            v_staff:       null,
+            v_date:        null,
+            v_interviewee: null,
+            remarks:       null,
+          });
+        }
       }
     };
 
