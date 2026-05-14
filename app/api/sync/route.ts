@@ -217,6 +217,7 @@ export async function POST(request: NextRequest) {
          (r.checkSalary && r.checkSalary !== 'none') || (r.checkLog && r.checkLog !== 'none'));
 
     const addReportRow = (entId: string, fiscal_year: number, cell: ScheduleCell) => {
+      if (cell.type === 'none') return;
       if (cell.report) {
         const r = cell.report;
         const key = `${entId}:${fiscal_year}:${cell.month}`;
@@ -264,11 +265,6 @@ export async function POST(request: NextRequest) {
       Object.entries(yearObj).forEach(([entId, cells]) => {
         cells.forEach(cell => addReportRow(entId, fiscal_year, cell));
       });
-    });
-
-    // Source 2: enterprises[].schedule (current FY — may not be in cache yet)
-    enterprises.forEach(ent => {
-      ent.schedule.forEach(cell => addReportRow(ent.id, currentFiscalYear, cell));
     });
 
     const reportRows = Array.from(reportMap.values());
